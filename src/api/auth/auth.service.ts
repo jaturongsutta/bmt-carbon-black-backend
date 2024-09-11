@@ -23,7 +23,7 @@ export class AuthService {
     if (user) {
       userLoginDto.user = user;
       if (user.isActive === 'Y') {
-        const menus = await this.getMenuByUserID(
+        const menuPermissions = await this.getMenuByUserID(
           user.userID,
           password,
           1,
@@ -32,7 +32,7 @@ export class AuthService {
 
         const payload = { userId: user.userID, username: username };
         const token = await this.jwtService.signAsync(payload, tokenOptions);
-        userLoginDto.menus = menus.data;
+        userLoginDto.permissions = menuPermissions.data;
         userLoginDto.token = token;
         userLoginDto.result.status = 0;
       } else {
@@ -77,5 +77,43 @@ export class AuthService {
     }
 
     return res;
+  }
+
+  async refreshToken(userId: number): Promise<any> {
+    // // Assuming there's a method to verify the refresh token and a method to get a new access token
+    // const isValidRefreshToken = await this.verifyRefreshToken(refreshToken);
+    // if (!isValidRefreshToken) {
+    //   return {
+    //     status: 401,
+    //     message: 'Invalid refresh token',
+    //   };
+    // }
+    const expireValue = '1h';
+    // const tokenExpire =
+    //   await this.systemParametersService.findbyType('TOKEN_EXPIRATION');
+    // if (tokenExpire !== null) {
+    //   expireValue = tokenExpire.paramValue;
+    // }
+
+    const user = await this.userRepository.findOneBy({ userID: userId });
+    if (!user) {
+      return {
+        status: 404,
+        message: 'User not found',
+      };
+    }
+
+    // Assuming the payload for the new token is similar to the one used in signIn
+    const payload = { username: user.username, userId: user.userID };
+    const tokenOptions = { expiresIn: expireValue };
+    const newAccessToken = await this.jwtService.signAsync(
+      payload,
+      tokenOptions,
+    );
+
+    return {
+      status: 0,
+      accessToken: newAccessToken,
+    };
   }
 }
