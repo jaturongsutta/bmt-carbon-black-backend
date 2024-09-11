@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './api/user/user.module';
 import { AuthModule } from './api/auth/auth.module';
+import { CommonModule } from './common/common.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config(); // Load environment variables from .env file
@@ -26,6 +27,7 @@ dotenv.config(); // Load environment variables from .env file
     }),
     UserModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
