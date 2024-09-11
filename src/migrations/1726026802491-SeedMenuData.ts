@@ -7,10 +7,10 @@ export class SeedMenuData1726026802491 implements MigrationInterface {
       VALUES 
         ('M1000', 1, 'Common Master', 'ข้อมูลพื้นฐาน', NULL, NULL, 'mdi-cog', 'Y', 'Y', 1, GETDATE(), NULL, GETDATE()),
         ('M1001', 1, 'User', 'ผู้ใช้งาน', '/user', 'M1000', NULL, 'N', 'Y', 1, GETDATE(), 1, GETDATE()),
-        ('M1002', 2, 'Role Permission', 'สิทธิการใช้งาน', '/role-permission', 'M1000', NULL, NULL, 'Y', 1, GETDATE(), NULL, GETDATE()),
-        ('M1003', 3, 'Predefine', 'Predefine', '/predefine', 'M1000', NULL, NULL, 'Y', 1, GETDATE(), NULL, GETDATE());
-        ('M1004', 4, 'Menu', 'เมนู', '/menu', 'M1000', NULL, NULL, 'Y', 1, GETDATE(), NULL, GETDATE());
-        ('M1005', 5, 'Log', 'Log', '/log', 'M1000', NULL, NULL, 'Y', 1, GETDATE(), NULL, GETDATE());
+        ('M1002', 2, 'Role Permission', 'สิทธิการใช้งาน', '/role-permission', 'M1000', NULL, 'N', 'Y', 1, GETDATE(), NULL, GETDATE()),
+        ('M1003', 3, 'Predefine', 'Predefine', '/predefine', 'M1000', NULL, 'N', 'Y', 1, GETDATE(), NULL, GETDATE()),
+        ('M1004', 4, 'Menu', 'เมนู', '/menu', 'M1000', NULL, 'N', 'Y', 1, GETDATE(), NULL, GETDATE()),
+        ('M1005', 5, 'Log', 'Log', '/log', 'M1000', NULL, 'N', 'Y', 1, GETDATE(), NULL, GETDATE());
     `);
   }
 

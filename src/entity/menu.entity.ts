@@ -17,33 +17,33 @@ export class Menu {
   @Column({ length: 255, name: 'Menu_Name_EN' })
   menuNameEN: string;
 
-  @Column({ length: 255, name: 'URL' })
+  @Column({ length: 255, name: 'URL', nullable: true })
   url: string;
 
-  @Column({ length: 10, name: 'Menu_Group' })
+  @Column({ length: 10, name: 'Menu_Group', nullable: true })
   menuGroup: string;
 
-  @Column({ name: 'Menu_Icon' })
+  @Column({ name: 'Menu_Icon', nullable: true })
   menuIcon: string;
 
-  @Column({ length: 1, name: 'Is_MainMenu' })
+  @Column({ length: 1, name: 'Is_MainMenu', nullable: true })
   isMainMenu: string;
 
-  @Column({ length: 1, name: 'Is_Active' })
+  @Column({ length: 1, name: 'Is_Active', nullable: true })
   isActive: string;
 
-  @Column({ name: 'Menu_Seq', type: 'int' })
+  @Column({ name: 'Menu_Seq', type: 'int', nullable: true })
   menuSeq: number;
 
-  @Column({ name: 'Created_By', type: 'int' })
+  @Column({ name: 'Created_By', type: 'int', nullable: true })
   createdBy: number;
 
-  @CreateDateColumn({ name: 'Created_Date', type: 'datetime' })
+  @CreateDateColumn({ name: 'Created_Date', type: 'datetime', nullable: true })
   createdDate: Date;
 
-  @Column({ name: 'Updated_by', type: 'int' })
+  @Column({ name: 'Updated_by', type: 'int', nullable: true })
   updatedBy: number;
 
-  @UpdateDateColumn({ name: 'Updated_Date', type: 'datetime' })
+  @UpdateDateColumn({ name: 'Updated_Date', type: 'datetime', nullable: true })
   updatedDate: Date;
 }

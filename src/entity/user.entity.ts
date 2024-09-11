@@ -23,7 +23,11 @@ export class User {
   @Column({ name: 'Last_Name', nullable: true, length: 200 })
   lastName: string;
 
-  @Column({ name: 'Position_Name', nullable: true, length: 200 })
+  @Column({
+    name: 'Position_Name',
+    nullable: true,
+    length: 200,
+  })
   positionName: string;
 
   @Column({ name: 'Is_Active', nullable: true, length: 1 })
@@ -32,12 +36,20 @@ export class User {
   @Column({ name: 'Create_By', nullable: true, type: 'int' })
   createdBy: number;
 
-  @CreateDateColumn({ name: 'Create_Date', nullable: true, type: 'datetime' })
+  @CreateDateColumn({
+    name: 'Create_Date',
+    nullable: true,
+    type: 'datetime',
+  })
   createdDate: Date;
 
   @Column({ name: 'Update_By', nullable: true, type: 'int' })
   updateBy: number;
 
-  @UpdateDateColumn({ name: 'Update_Date', nullable: true, type: 'datetime' })
+  @UpdateDateColumn({
+    name: 'Update_Date',
+    nullable: true,
+    type: 'datetime',
+  })
   updateDate: Date;
 }

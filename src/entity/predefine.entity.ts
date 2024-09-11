@@ -14,7 +14,7 @@ export class Predefine {
   @PrimaryColumn({ length: 20, name: 'Predefine_CD' })
   predefineCD: string;
 
-  @Column({ length: 600, name: 'Description' })
+  @Column({ length: 600, name: 'Description', nullable: true })
   description: string;
 
   @Column({ length: 600, name: 'Value_TH' })
@@ -26,15 +26,15 @@ export class Predefine {
   @Column({ length: 1, name: 'Is_Active' })
   isActive: string;
 
-  @Column({ name: 'Create_By', type: 'int' })
+  @Column({ name: 'Create_By', type: 'int', nullable: true })
   createBy: number;
 
-  @CreateDateColumn({ name: 'Create_Date', type: 'datetime' })
+  @CreateDateColumn({ name: 'Create_Date', type: 'datetime', nullable: true })
   createDate: Date;
 
-  @Column({ name: 'Update_By', type: 'int' })
+  @Column({ name: 'Update_By', type: 'int', nullable: true })
   updateBy: number;
 
-  @UpdateDateColumn({ name: 'Update_Date', type: 'datetime' })
+  @UpdateDateColumn({ name: 'Update_Date', type: 'datetime', nullable: true })
   updateDate: Date;
 }
