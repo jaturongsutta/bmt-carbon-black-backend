@@ -35,5 +35,5 @@ export class Role {
   updateDate: Date;
 
   @OneToMany(() => RolePermission, (role) => role.roleID)
-  umRolePermission: RolePermission[];
+  rolePermissions: RolePermission[];
 }

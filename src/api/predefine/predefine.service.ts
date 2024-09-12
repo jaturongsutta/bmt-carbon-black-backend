@@ -13,12 +13,8 @@ export class PredefineService {
     private commonService: CommonService,
   ) {}
 
-  // async paginate(options: IPaginationOptions): Promise<Pagination<Predefine>>{}
-
   async findAll(page: number, limit: number, order: 'ASC' | 'DESC' = 'ASC') {
     limit = limit > 100 ? 100 : limit;
-
-    // console.log(page, limit);
 
     const [items, totalItems]: [Predefine[], number] =
       await this.predefineRepository.findAndCount({
