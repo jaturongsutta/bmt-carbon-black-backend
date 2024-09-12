@@ -23,12 +23,7 @@ export class AuthService {
     if (user) {
       userLoginDto.user = user;
       if (user.isActive === 'Y') {
-        const menuPermissions = await this.getMenuByUserID(
-          user.userID,
-          password,
-          1,
-          'EN',
-        );
+        const menuPermissions = await this.getMenuByUserID(user.userID, 'EN');
 
         const payload = { userId: user.userID, username: username };
         const token = await this.jwtService.signAsync(payload, tokenOptions);
@@ -47,12 +42,7 @@ export class AuthService {
     return userLoginDto;
   }
 
-  async getMenuByUserID(
-    userID: number,
-    password: string,
-    menuType: number,
-    lang: string,
-  ) {
+  async getMenuByUserID(userID: number, lang: string) {
     const req = await this.commonService.getConnection();
     req.input('User_ID', userID);
     req.input('Language', lang);

@@ -22,7 +22,7 @@ export class SeedUserData1726026230186 implements MigrationInterface {
 
       INSERT INTO um_Role_Permission (Role_ID, Menu_No, Can_Add, Can_Update, Can_View, Is_Active)
       VALUES 
-       (1, 'M1000', 'Y', 'Y', 'Y', 'Y'),
+       --(1, 'M1000', 'Y', 'Y', 'Y', 'Y'),
        (1, 'M1001', 'Y', 'Y', 'Y', 'Y'),
        (1, 'M1002', 'Y', 'Y', 'Y', 'Y'),
        (1, 'M1003', 'Y', 'Y', 'Y', 'Y'),

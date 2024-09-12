@@ -22,6 +22,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('get-menu-by-user-id')
+  async getMenuByUserID(@Request() req: any) {
+    const userId = req.user.userId;
+    return this.authService.getMenuByUserID(userId, 'EN');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('refresh-token')
   async refreshToken(@Request() req: any) {
     const userId = req.user.userId;
