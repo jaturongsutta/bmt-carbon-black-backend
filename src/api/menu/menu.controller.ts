@@ -29,36 +29,6 @@ export class MenuController extends BaseController {
     return this.service.search(body);
   }
 
-  // @Post()
-  // async addMenu(@Body() data: um_Menu) {
-  //   try {
-  //     var is_success = await this.service.addMenu(data);
-  //     if (is_success) {
-  //       return { status: 0 };
-  //     } else {
-  //       return { status: 1 };
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     return { status: 2, message: error.message };
-  //   }
-  // }
-
-  // @Put()
-  // async updateMenu(@Body() data: um_Menu) {
-  //   try {
-  //     var is_success = await this.service.updateMenu(data);
-  //     if (is_success) {
-  //       return { status: 0 };
-  //     } else {
-  //       return { status: 1 };
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     return { status: 2, message: error.message };
-  //   }
-  // }
-
   @Delete('/:Menu_No/')
   async deleteateMenu(@Param('Menu_No') Menu_No: string) {
     try {

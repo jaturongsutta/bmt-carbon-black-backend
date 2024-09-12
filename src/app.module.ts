@@ -7,6 +7,8 @@ import { AuthModule } from './api/auth/auth.module';
 import { CommonModule } from './common/common.module';
 import * as dotenv from 'dotenv';
 import { MenuRouteModule } from './api/menu-route/menu-route.module';
+import { MenuModule } from './api/menu/menu.module';
+import { PredefineModule } from './api/predefine/predefine.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -29,7 +31,10 @@ dotenv.config(); // Load environment variables from .env file
     UserModule,
     AuthModule,
     CommonModule,
+    MenuModule,
     MenuRouteModule,
+    PredefineModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
