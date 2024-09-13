@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 import { MenuRouteModule } from './api/menu-route/menu-route.module';
 import { MenuModule } from './api/menu/menu.module';
 import { PredefineModule } from './api/predefine/predefine.module';
+import { DropdownListModule } from './api/dropdown-list/dropdown-list.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -35,6 +36,7 @@ dotenv.config(); // Load environment variables from .env file
     MenuRouteModule,
     PredefineModule,
     UserModule,
+    DropdownListModule,
   ],
   controllers: [AppController],
   providers: [AppService],
