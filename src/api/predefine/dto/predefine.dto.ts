@@ -1,9 +1,9 @@
-import { BaseSearch } from 'src/common/base-search';
+import { BaseDto } from 'src/common/base-dto';
 
-export class PredefineDto extends BaseSearch {
+export class PredefineDto extends BaseDto {
   predefineGroup: string;
 
-  predefineCD: string;
+  predefineCd: string;
 
   description: string;
 

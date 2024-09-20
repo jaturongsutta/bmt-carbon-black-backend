@@ -12,16 +12,16 @@ export class Predefine {
   predefineGroup: string;
 
   @PrimaryColumn({ length: 20, name: 'Predefine_CD' })
-  predefineCD: string;
+  predefineCd: string;
 
   @Column({ length: 600, name: 'Description', nullable: true })
   description: string;
 
   @Column({ length: 600, name: 'Value_TH' })
-  valueTH: string;
+  valueTh: string;
 
   @Column({ length: 600, name: 'Value_EN' })
-  valueEN: string;
+  valueEn: string;
 
   @Column({ length: 1, name: 'Is_Active' })
   isActive: string;

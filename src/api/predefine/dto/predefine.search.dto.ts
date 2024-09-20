@@ -1,7 +1,9 @@
-export class PredefineSearchDto {
-  group: string;
-  code: string;
+import { BaseSearch } from 'src/common/base-search';
+
+export class PredefineSearchDto extends BaseSearch {
+  predefineGroup: string;
+  predefineCd: string;
   valueTH: string;
   valueEN: string;
-  status: string;
+  isActive: string;
 }

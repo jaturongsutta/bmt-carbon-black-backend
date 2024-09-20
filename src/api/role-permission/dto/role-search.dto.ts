@@ -1,4 +1,6 @@
-export class RoleSearchDto {
+import { BaseSearch } from 'src/common/base-search';
+
+export class RoleSearchDto extends BaseSearch {
   roleId: number;
 
   roleNameEn: string;
@@ -10,11 +12,4 @@ export class RoleSearchDto {
   createdBy: number;
 
   updatedBy: number;
-
-  roleMenuList: {
-    Menu_No: number;
-    Can_Update: string;
-    Can_Add: string;
-    Can_View: string;
-  };
 }

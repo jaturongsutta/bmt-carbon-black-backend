@@ -64,7 +64,7 @@ export class UserService {
       req.input('Row_No_From', dto.searchOptions.rowFrom);
       req.input('Row_No_To', dto.searchOptions.rowFrom);
 
-      const result = await this.commonService.executeStoreProcedure(
+      const result = await this.commonService.getSearch(
         'sp_um_Search_User',
         req,
       );

@@ -19,7 +19,7 @@ export class AuthService {
     });
 
     const userLoginDto = new UserLoginDto();
-    const tokenOptions = { expiresIn: '30m' };
+    const tokenOptions = { expiresIn: '50m' };
     if (user) {
       userLoginDto.user = user;
       if (user.isActive === 'Y') {
@@ -78,7 +78,7 @@ export class AuthService {
     //     message: 'Invalid refresh token',
     //   };
     // }
-    const expireValue = '1h';
+    const expireValue = '50m';
     // const tokenExpire =
     //   await this.systemParametersService.findbyType('TOKEN_EXPIRATION');
     // if (tokenExpire !== null) {

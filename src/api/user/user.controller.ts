@@ -25,6 +25,16 @@ export class UserController extends BaseController {
     return this.userService.getByID(id);
   }
 
+  @Post('search')
+  async search(@Body() data: any) {
+    try {
+      const result = await this.userService.search(data);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Post()
   async addUser(@Body() data: UserDto) {
     data.password = EncryptData.hash(data.password);
