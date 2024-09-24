@@ -1,4 +1,6 @@
-export class UserDto {
+import { BaseDto } from 'src/common/base-dto';
+
+export class UserDto extends BaseDto {
   userId: number;
 
   username: string;

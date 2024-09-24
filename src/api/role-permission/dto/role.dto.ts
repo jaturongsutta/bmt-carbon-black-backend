@@ -1,21 +1,19 @@
-import { RolePermission } from 'src/entity/role-permission.entity';
-
 export class RoleDto {
-  Role_ID: number;
+  roleId: number;
 
-  Role_Name_TH: string;
+  roleNameTh: string;
 
-  Role_Name_EN: string;
+  roleNameEn: string;
 
-  Is_Active: string;
+  isActive: string;
 
-  UserLogin: string;
+  userLogin: string;
 
-  Update_By: number;
+  updateBy: number;
 
-  Update_Date: Date;
+  updateDate: Date;
 
   rowNum: number;
 
-  items: Array<RolePermission>;
+  items: Array<any>;
 }

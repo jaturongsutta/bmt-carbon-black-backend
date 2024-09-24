@@ -11,13 +11,13 @@ import { RolePermission } from './role-permission.entity';
 @Entity('um_Role')
 export class Role {
   @PrimaryGeneratedColumn({ name: 'Role_ID', type: 'int' })
-  roleID: number;
+  roleId: number;
 
   @Column({ name: 'Role_Name_TH', length: 200 })
-  roleNameTH: string;
+  roleNameTh: string;
 
   @Column({ name: 'Role_Name_EN', length: 200 })
-  roleNameEN: string;
+  roleNameEn: string;
 
   @Column({ name: 'Is_Active', length: 1 })
   isActive: string;
@@ -34,6 +34,6 @@ export class Role {
   @UpdateDateColumn({ name: 'Update_Date', type: 'datetime', nullable: true })
   updateDate: Date;
 
-  @OneToMany(() => RolePermission, (role) => role.roleID)
+  @OneToMany(() => RolePermission, (role) => role.roleId)
   rolePermissions: RolePermission[];
 }

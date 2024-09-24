@@ -23,9 +23,9 @@ export class AuthService {
     if (user) {
       userLoginDto.user = user;
       if (user.isActive === 'Y') {
-        const menuPermissions = await this.getMenuByUserID(user.userID, 'EN');
+        const menuPermissions = await this.getMenuByUserID(user.userId, 'EN');
 
-        const payload = { userId: user.userID, username: username };
+        const payload = { userId: user.userId, username: username };
         const token = await this.jwtService.signAsync(payload, tokenOptions);
         userLoginDto.permissions = menuPermissions.data;
         userLoginDto.token = token;
@@ -85,7 +85,7 @@ export class AuthService {
     //   expireValue = tokenExpire.paramValue;
     // }
 
-    const user = await this.userRepository.findOneBy({ userID: userId });
+    const user = await this.userRepository.findOneBy({ userId: userId });
     if (!user) {
       return {
         status: 404,
@@ -94,7 +94,7 @@ export class AuthService {
     }
 
     // Assuming the payload for the new token is similar to the one used in signIn
-    const payload = { username: user.username, userId: user.userID };
+    const payload = { username: user.username, userId: user.userId };
     const tokenOptions = { expiresIn: expireValue };
     const newAccessToken = await this.jwtService.signAsync(
       payload,

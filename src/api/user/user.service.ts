@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserSearchDto } from './dto/user-search.dto';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
+import { BaseResponse } from 'src/common/base-response';
 
 @Injectable()
 export class UserService {
@@ -14,37 +15,18 @@ export class UserService {
     private commonService: CommonService,
   ) {}
 
-  async findUserById(userID: number): Promise<User | null> {
-    // Assuming there's a User model with a static method findOne that accepts a query object
-    const user = await this.userRepository.findOne({ where: { userID } });
+  async getByID(id: number): Promise<UserDto> {
+    const dto = new UserDto();
+
+    const user = await this.userRepository.findOne({ where: { userId: id } });
     if (!user) {
-      return null;
+      dto.result.status = 2;
+      dto.result.message = 'User not found';
+      return dto;
     }
-    return user;
-  }
 
-  async getByID(id: number) {
-    try {
-      const req = await this.commonService.getConnection();
-      req.input('User_ID', id);
-      const query = await this.commonService.executeStoreProcedure(
-        'sp_um_Search_User_By_ID',
-        req,
-      );
-      // console.log('userId recordsets', query);
-
-      return query.recordset;
-    } catch (error) {
-      throw new Error(error.message || 'An unexpected error occurred');
-    }
-  }
-
-  // getByID(id: number): Promise<User> {
-  //   return this.userRepository.findOneBy({ userID: id });
-  // }
-
-  getByUsername(username: string): Promise<User> {
-    return this.userRepository.findOneBy({ username: username });
+    Object.assign(dto, user);
+    return dto;
   }
 
   getByLogin(username: string, password: string): Promise<User> {
@@ -62,7 +44,7 @@ export class UserService {
       req.input('Last_Name', dto.lastName);
       req.input('Status', dto.status);
       req.input('Row_No_From', dto.searchOptions.rowFrom);
-      req.input('Row_No_To', dto.searchOptions.rowFrom);
+      req.input('Row_No_To', dto.searchOptions.rowTo);
 
       const result = await this.commonService.getSearch(
         'sp_um_Search_User',
@@ -74,55 +56,20 @@ export class UserService {
       throw error;
     }
   }
-
-  async addUser(data: UserDto) {
-    try {
-      const newListRole = JSON.stringify(data.listRow);
-      const req = await this.commonService.getConnection();
-      req.input('User_Name', data.username);
-      req.input('Password', data.password);
-      req.input('First_Name', data.firstName);
-      req.input('Last_Name', data.lastName);
-      req.input('Position_Name', data.positionName);
-      req.input('Status', data.status);
-      req.input('List_Role', newListRole);
-      req.input('Created_By', data.createdBy);
-      req.output('Return_CD', '');
-      const result = await this.commonService.executeStoreProcedure(
-        'sp_Add_User',
-        req,
-      );
-
-      return result.output.Return_CD;
-    } catch (error) {
-      throw error;
-    }
+  async addUser(data: UserDto): Promise<User> {
+    console.log('data', data);
+    const user = this.userRepository.create(data);
+    return await this.userRepository.save(user);
   }
 
-  async updateUser(data: UserDto) {
-    const newListRole = JSON.stringify(data.listRow);
-
-    try {
-      const req = await this.commonService.getConnection();
-      req.input('User_ID', data.userId);
-      req.input('User_Name', data.username);
-      req.input('First_Name', data.firstName);
-      req.input('Last_Name', data.lastName);
-      req.input('Position_Name', data.positionName);
-      req.input('Status', data.status);
-      req.input('List_Role', newListRole);
-      req.input('Created_By', data.createdBy);
-      req.output('Return_CD', '');
-      const result = await this.commonService.executeStoreProcedure(
-        'sp_Edit_User',
-        req,
-      );
-      // console.log('sp_Edit_User', result.output.Return_CD);
-
-      return result.output.Return_CD;
-    } catch (error) {
-      throw new Error(error.message || 'An unexpected error occurred');
+  async updateUser(id: number, data: UserDto): Promise<User> {
+    const user = await this.userRepository.findOneBy({ userId: id });
+    if (!user) {
+      throw new Error('User not found');
     }
+
+    Object.assign(user, data);
+    return await this.userRepository.save(user);
   }
 
   async changePassword(data: UserChangePasswordDto) {
@@ -146,9 +93,10 @@ export class UserService {
     }
   }
 
-  async deleteUser(id: number): Promise<boolean> {
-    const r = await this.userRepository.delete({ userID: id });
-    return r.affected > 0;
+  async deleteUser(id: number): Promise<BaseResponse> {
+    const r = await this.userRepository.delete({ userId: id });
+    if (r.affected > 0) return { status: 0 };
+    else return { status: 1 };
   }
 
   async getMenuByUserID(

@@ -13,6 +13,7 @@ import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { EncryptData } from 'src/_services/encrypt';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
+import { BaseResponse } from 'src/common/base-response';
 
 @Controller('user')
 export class UserController extends BaseController {
@@ -21,8 +22,8 @@ export class UserController extends BaseController {
   }
 
   @Get(':id')
-  getByID(@Param('id') id: number) {
-    return this.userService.getByID(id);
+  async getByID(@Param('id') id: number) {
+    return await this.userService.getByID(id);
   }
 
   @Post('search')
@@ -36,19 +37,32 @@ export class UserController extends BaseController {
   }
 
   @Post()
-  async addUser(@Body() data: UserDto) {
-    data.password = EncryptData.hash(data.password);
-    // console.log('data pass has', data);
-    return this.userService.addUser(data);
+  async addUser(
+    @Body() data: UserDto,
+    @Request() req: any,
+  ): Promise<BaseResponse> {
+    data.createdBy = req.user.userId;
+    const result = await this.userService.addUser(data);
+
+    if (result) {
+      return {
+        status: 0,
+      };
+    }
   }
 
-  @Put()
-  async updateUser(@Request() req: any, @Body() data: UserDto) {
-    try {
-      const result = await this.userService.updateUser(data);
-      return result;
-    } catch (error) {
-      throw error;
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: number,
+    @Body() data: UserDto,
+    @Request() req: any,
+  ): Promise<BaseResponse> {
+    data.updatedBy = req.user.userId;
+    const result = await this.userService.updateUser(id, data);
+    if (result) {
+      return {
+        status: 0,
+      };
     }
   }
 
@@ -67,16 +81,6 @@ export class UserController extends BaseController {
 
   @Delete(':id')
   async deleteateUser(@Param('id') id: number) {
-    try {
-      const is_success = await this.userService.deleteUser(id);
-      if (is_success) {
-        return { status: 0 };
-      } else {
-        return { status: 1 };
-      }
-    } catch (error) {
-      console.error(error);
-      return { status: 2 };
-    }
+    return await this.userService.deleteUser(id);
   }
 }
