@@ -71,8 +71,8 @@ export class RolePermissionService {
     role.roleNameTh = data.roleNameTh;
     role.roleNameEn = data.roleNameEn;
     role.isActive = data.isActive;
-    role.createBy = userLogin;
-    role.createDate = new Date();
+    role.createBy = role.updateBy = userLogin;
+    role.createDate = role.updateDate = new Date();
 
     // Save the Role entity
     const savedRole = await this.roleRepository.save(role);

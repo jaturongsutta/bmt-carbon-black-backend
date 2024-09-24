@@ -7,15 +7,19 @@ import {
   Put,
   Delete,
   Res,
+  Request,
 } from '@nestjs/common';
 import { PredefineService } from './predefine.service';
 import { Response } from 'express';
 import { PredefineDto } from './dto/predefine.dto';
 import { PredefineSearchDto } from './dto/predefine.search.dto';
+import { BaseController } from 'src/base.controller';
 
 @Controller('predefine')
-export class PredefineController {
-  constructor(private service: PredefineService) {}
+export class PredefineController extends BaseController {
+  constructor(private service: PredefineService) {
+    super();
+  }
 
   @Post('search')
   async search(
@@ -24,12 +28,6 @@ export class PredefineController {
   ) {
     const predefines = await this.service.search(predefineSearchDto);
     return res.status(200).json(predefines);
-  }
-
-  @Post()
-  async create(@Body() predefineDto: PredefineDto, @Res() res: Response) {
-    const predefine = await this.service.create(predefineDto);
-    return res.status(201).json(predefine);
   }
 
   @Get()
@@ -48,17 +46,29 @@ export class PredefineController {
     return res.status(200).json(predefine);
   }
 
+  @Post()
+  async create(
+    @Body() predefineDto: PredefineDto,
+    @Request() req,
+    @Res() res: Response,
+  ) {
+    const predefine = await this.service.create(predefineDto, req.user.userId);
+    return res.status(201).json(predefine);
+  }
+
   @Put(':predefineGroup/:predefineCd')
   async update(
     @Param('predefineGroup') predefineGroup: string,
     @Param('predefineCd') predefineCd: string,
     @Body() predefineDto: PredefineDto,
+    @Request() req,
     @Res() res: Response,
   ) {
     const updatedPredefine = await this.service.update(
       predefineGroup,
       predefineCd,
       predefineDto,
+      req.user.userId,
     );
     return res.status(200).json(updatedPredefine);
   }

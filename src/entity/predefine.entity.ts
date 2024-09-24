@@ -29,12 +29,23 @@ export class Predefine {
   @Column({ name: 'Create_By', type: 'int', nullable: true })
   createBy: number;
 
-  @CreateDateColumn({ name: 'Create_Date', type: 'datetime', nullable: true })
+  @CreateDateColumn({
+    name: 'Create_Date',
+    type: 'datetime',
+    nullable: true,
+    default: () => 'GETDATE()',
+  })
   createDate: Date;
 
   @Column({ name: 'Update_By', type: 'int', nullable: true })
   updateBy: number;
 
-  @UpdateDateColumn({ name: 'Update_Date', type: 'datetime', nullable: true })
+  @UpdateDateColumn({
+    name: 'Update_Date',
+    type: 'datetime',
+    nullable: true,
+    default: () => 'GETDATE()',
+    onUpdate: 'GETDATE()',
+  })
   updateDate: Date;
 }

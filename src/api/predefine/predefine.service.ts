@@ -34,8 +34,10 @@ export class PredefineService {
     }
   }
 
-  async create(predefineDto: PredefineDto): Promise<BaseResponse> {
+  async create(predefineDto: PredefineDto, userId): Promise<BaseResponse> {
     try {
+      predefineDto.createBy = userId;
+      predefineDto.updateBy = userId;
       const data = await this.predefineRepository.findOne({
         where: {
           predefineGroup: predefineDto.predefineGroup,
@@ -50,6 +52,7 @@ export class PredefineService {
       }
 
       const predefine = this.predefineRepository.create(predefineDto);
+      console.log('perdefine : ', predefine);
       await this.predefineRepository.insert(predefine);
 
       return {
@@ -84,7 +87,11 @@ export class PredefineService {
     predefineGroup: string,
     predefineCd: string,
     predefineDto: PredefineDto,
+    userId: number,
   ): Promise<BaseResponse> {
+    predefineDto.updateBy = userId;
+    predefineDto.updateDate = new Date();
+
     await this.predefineRepository.update(
       { predefineGroup, predefineCd },
       predefineDto,
