@@ -11,6 +11,7 @@ import { MenuModule } from './api/menu/menu.module';
 import { PredefineModule } from './api/predefine/predefine.module';
 import { DropdownListModule } from './api/dropdown-list/dropdown-list.module';
 import { RolePermissionModule } from './api/role-permission/role-permission.module';
+import { ApplicationLogModule } from './api/application-log/application-log.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -30,6 +31,7 @@ dotenv.config(); // Load environment variables from .env file
         },
       }),
     }),
+    ApplicationLogModule,
     UserModule,
     AuthModule,
     CommonModule,

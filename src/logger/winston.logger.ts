@@ -61,10 +61,10 @@ const options = {
 };
 
 const _createLogger = async () => {
-  let logDir = 'logs';
-  let logDirCombined = path.join(logDir, 'logs', '%DATE%-combined.log');
+  let logDir = path.join(process.env.ENV_DEVELOP_DIR, 'logs');
+  let logDirCombined = path.join(logDir, 'logs', '%DATE%.log');
   let logDirError = path.join(logDir, 'error', '%DATE%-error.log');
-  if (1 === 1 || process.env.ENV !== 'develop') {
+  if (process.env.ENV !== 'develop') {
     try {
       await mssql.connect(config);
       const result =
@@ -78,7 +78,7 @@ const _createLogger = async () => {
         }
         existsSync = fs.existsSync(logDir);
         if (existsSync) {
-          logDirCombined = path.join(logDir, 'combined', '%DATE%-combned.log');
+          logDirCombined = path.join(logDir, 'combined', '%DATE%.log');
           logDirError = path.join(logDir, 'error', '%DATE%-error.log');
         } else {
           console.error('Log directory not found');

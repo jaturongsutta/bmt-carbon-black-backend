@@ -15,7 +15,7 @@ export class ApplicationLogService {
   ) {}
 
   async search() {
-    let logDir = path.join(__dirname, '..', '..', '..', this.logPath);
+    let logDir = path.join(process.env.ENV_DEVELOP_DIR, 'logs');
     if (process.env.ENV !== 'develop') {
       const data = await this.predefineRepository.findOne({
         where: { predefineGroup: 'ConfigPath', predefineCd: 'Log' },
@@ -24,7 +24,7 @@ export class ApplicationLogService {
       logDir = data.valueEn;
     }
 
-    const directoryPathCombined = path.join(logDir, 'combined');
+    const directoryPathCombined = path.join(logDir, 'logs');
     const directoryPathError = path.join(logDir, 'error');
 
     try {
@@ -52,7 +52,17 @@ export class ApplicationLogService {
   }
 
   async getContentLog(filename: string, type: string) {
-    let logDir = path.join(__dirname, '..', '..', '..', this.logPath);
+    const logPath = await this.getLogPath(type, filename);
+    try {
+      const content = await fs.promises.readFile(logPath, 'utf8');
+      return content;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to read file');
+    }
+  }
+
+  async getLogPath(logType: string, filename: string): Promise<string> {
+    let logDir = path.join(process.env.ENV_DEVELOP_DIR, 'logs');
     if (process.env.ENV !== 'develop') {
       const data = await this.predefineRepository.findOne({
         where: { predefineGroup: 'ConfigPath', predefineCd: 'Log' },
@@ -61,20 +71,12 @@ export class ApplicationLogService {
       logDir = data.valueEn;
     }
 
-    const directoryPathCombined = path.join(logDir, 'combined');
+    const directoryPathCombined = path.join(logDir, 'logs');
     const directoryPathError = path.join(logDir, 'error');
 
     const directoryPathSelected =
-      type === 'combined' ? directoryPathCombined : directoryPathError;
+      logType === 'error' ? directoryPathError : directoryPathCombined;
 
-    try {
-      const content = await fs.promises.readFile(
-        path.join(directoryPathSelected, filename),
-        'utf8',
-      );
-      return content;
-    } catch (error) {
-      throw new Error(error.message || 'Failed to read file');
-    }
+    return path.join(directoryPathSelected, filename);
   }
 }

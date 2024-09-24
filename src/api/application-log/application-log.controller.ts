@@ -9,7 +9,7 @@ export class ApplicationLogController extends BaseController {
   }
 
   @Post('search')
-  async search() {
+  async search(dto: any) {
     return this.service.search();
   }
 
