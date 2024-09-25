@@ -2,8 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateStoreProcedure1726138099149 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      CREATE FUNCTION [dbo].[fn_um_get_Username]    
+    await queryRunner.query(`CREATE FUNCTION [dbo].[fn_um_get_Username]    
       (   
         @User_CD int   
       )   
@@ -15,10 +14,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         FROM um_User   
         WHERE [User_ID]  = @User_CD   
         RETURN @Return_Value   
-      END 
-      GO
+      END;  `);
 
-      CREATE FUNCTION [dbo].[fn_co_get_Predefine]    
+    await queryRunner.query(` CREATE FUNCTION [dbo].[fn_co_get_Predefine]    
       (   
         @Predefine_Group nvarchar(20),   
         @Predefine_CD  nvarchar(20),   
@@ -33,10 +31,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         WHERE Predefine_Group = @Predefine_Group   
           AND Predefine_CD = @Predefine_CD   
         RETURN @Return_Value   
-      END 
-      GO
+      END; `);
 
-      CREATE PROCEDURE [dbo].[sp_um_Search_User]
+    await queryRunner.query(`CREATE PROCEDURE [dbo].[sp_um_Search_User]
       (
         @User_Name nvarchar(255),
         @First_Name nvarchar(255),
@@ -78,10 +75,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         SELECT COUNT(*) Total_Record
         FROM #Temp_Result
         DROP TABLE #Temp_Result
-      END 
-      GO
+      END; `);
 
-      CREATE PROCEDURE [dbo].[sp_um_Search_Role_Permission]
+    await queryRunner.query(` CREATE PROCEDURE [dbo].[sp_um_Search_Role_Permission]
       @Role_ID INT
       AS
       BEGIN
@@ -93,7 +89,6 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
             , CASE WHEN RP.Can_Add = 'Y' THEN 'Y' ELSE 'N' END Can_Add 
             , CASE WHEN RP.Can_Update = 'Y' THEN 'Y' ELSE 'N' END Can_Update 
             , CASE WHEN RP.Can_View = 'Y' THEN 'Y' ELSE 'N' END Can_View 
-            , RP.Is_Active
           FROM (SELECT DISTINCT Menu_No, Menu_Name_EN, Is_MainMenu, Menu_Group
             FROM um_Menu
             WHERE Is_Active = 'Y') MN
@@ -108,7 +103,6 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
             , CASE WHEN RP.Can_Add = 'Y' THEN 'Y' ELSE 'N' END Can_Add 
             , CASE WHEN RP.Can_Update = 'Y' THEN 'Y' ELSE 'N' END Can_Update 
             , CASE WHEN RP.Can_View = 'Y' THEN 'Y' ELSE 'N' END Can_View 
-            , RP.Is_Active
           FROM (SELECT DISTINCT Menu_No, Menu_Name_EN, Is_MainMenu, Menu_Group
             FROM um_Menu
             WHERE Is_Active = 'Y') MN
@@ -117,9 +111,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
             FROM um_Role_Permission
             WHERE (Role_ID = isnull(@Default_Role_ID,'') OR isnull(@Default_Role_ID,'') = '')) RP ON MN.Menu_No = RP.Menu_No
         END
-      END 
-      GO
+      END; `);
 
+    await queryRunner.query(`
       CREATE PROCEDURE [dbo].[sp_co_Search_Predefine]
       (
         @Predefine_Group nvarchar(20),
@@ -171,9 +165,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         SELECT COUNT(*) Total_Record
         FROM #Temp_Result
         DROP TABLE #Temp_Result
-      END 
-      GO
+      END  `);
 
+    await queryRunner.query(`
       CREATE PROCEDURE [dbo].[sp_um_Load_Role_Permission]
       (
         @Role_ID int,
@@ -213,9 +207,10 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         ) Tab
         GROUP BY Menu_No, Menu_Name
         ORDER BY Menu_No
-      END
-      GO
+      END`);
 
+    await queryRunner.query(`
+      
       CREATE PROCEDURE [dbo].[sp_um_User_Role_Permission]
       (
         @User_ID INT,
@@ -312,9 +307,10 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
           PRINT 'Actual error number: ' + @Return_CD; 
           THROW; 
         END CATCH
-      END 
-      GO
+      END `);
 
+    await queryRunner.query(` 
+      
       CREATE PROCEDURE [dbo].[sp_um_Search_Role]
       (
         @Role_Name_EN nvarchar(255),
@@ -353,9 +349,9 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         SELECT COUNT(*) Total_Record
         FROM #Temp_Result
         DROP TABLE #Temp_Result
-      END 
-      GO
+      END  `);
 
+    await queryRunner.query(` 
       CREATE PROCEDURE [dbo].[sp_um_Search_Menu]
       (
         @Menu_No NVARCHAR(5),
@@ -387,8 +383,7 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
           AND (mn.Menu_Name_TH LIKE '%' + ISNULL(@Menu_Name, '') + '%' OR mn.Menu_Name_EN LIKE '%' + ISNULL(@Menu_Name, '') + '%' OR ISNULL(@Menu_Name, '') = '')
           AND (mn.Is_Active = ISNULL(@Status, '') OR ISNULL(@Status, '') = '')
         ORDER BY Menu_No;
-      END;
-      GO
+      END
     `);
   }
 

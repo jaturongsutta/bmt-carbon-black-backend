@@ -4,7 +4,7 @@ export class CreatTable1726025309310 implements MigrationInterface {
   name = 'CreatTable1726025309310';
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "um_Role_Permission" ("Role_ID" int NOT NULL, "Menu_No" nvarchar(5) NOT NULL, "Can_Add" nvarchar(1) NOT NULL, "Can_Update" nvarchar(1) NOT NULL, "Can_View" nvarchar(1) NOT NULL, "Is_Active" nvarchar(1) NOT NULL, "Create_By" int, "Create_Date" datetime, "Update_By" int, "Update_Date" datetime, CONSTRAINT "PK_6fa1309576015e689a732fe4e3c" PRIMARY KEY ("Role_ID", "Menu_No"))`,
+      `CREATE TABLE "um_Role_Permission" ("Role_ID" int NOT NULL, "Menu_No" nvarchar(5) NOT NULL, "Can_Add" nvarchar(1) NOT NULL, "Can_Update" nvarchar(1) NOT NULL, "Can_View" nvarchar(1) NOT NULL, "Create_By" int, "Create_Date" datetime, "Update_By" int, "Update_Date" datetime, CONSTRAINT "PK_6fa1309576015e689a732fe4e3c" PRIMARY KEY ("Role_ID", "Menu_No"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "um_Role" ("Role_ID" int NOT NULL IDENTITY(1,1), "Role_Name_TH" nvarchar(200) NOT NULL, "Role_Name_EN" nvarchar(200) NOT NULL, "Is_Active" nvarchar(1) NOT NULL, "Create_By" int, "Create_Date" datetime CONSTRAINT "DF_ebe9117d50768e5174f5799ba10" DEFAULT getdate(), "Update_By" int, "Update_Date" datetime CONSTRAINT "DF_3e3b33db8c4d8132114f804fe8d" DEFAULT getdate(), CONSTRAINT "PK_669a023ede661f5c1142ba5a808" PRIMARY KEY ("Role_ID"))`,
