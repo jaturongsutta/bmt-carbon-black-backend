@@ -19,4 +19,7 @@ export class MenuRoute {
 
   @Column({ name: 'Is_Require_Auth', type: 'bit' })
   isRequireAuth: boolean;
+
+  @Column({ name: 'Is_Main', type: 'bit' })
+  isMain: boolean;
 }
