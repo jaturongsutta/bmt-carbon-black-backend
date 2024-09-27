@@ -22,7 +22,7 @@ export class CreatTable1726025309310 implements MigrationInterface {
       `CREATE TABLE "um_User" ("User_ID" int NOT NULL IDENTITY(1,1), "Username" nvarchar(40) NOT NULL, "User_Password" nvarchar(200), "First_Name" nvarchar(200), "Last_Name" nvarchar(200), "Position_Name" nvarchar(200), "Is_Active" nvarchar(1), "Create_By" int, "Create_Date" datetime CONSTRAINT "DF_ae1de3d7b42bf1a821f9d79a78d" DEFAULT getdate(), "Update_By" int, "Update_Date" datetime CONSTRAINT "DF_60e40aa829642909737f5f06ccf" DEFAULT getdate(), CONSTRAINT "UQ_e937103a6ea41471bd273f8efb1" UNIQUE ("Username"), CONSTRAINT "PK_ce2a09e917199f127dfc4edae50" PRIMARY KEY ("User_ID"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "um_Menu_Route" ("Menu_Route_ID" int NOT NULL IDENTITY(1,1), "Menu_No" nvarchar(5) NOT NULL, "Route_Name" nvarchar(200) NOT NULL, "Route_Path" nvarchar(200) NOT NULL, "Physical_Path" nvarchar(500) NOT NULL, "Is_Require_Auth" bit NOT NULL, CONSTRAINT "PK_c8ac399c3f45c21c35c2184eb2d" PRIMARY KEY ("Menu_Route_ID"))`,
+      `CREATE TABLE "um_Menu_Route" ("Menu_Route_ID" int NOT NULL IDENTITY(1,1), "Menu_No" nvarchar(5) NOT NULL, "Route_Name" nvarchar(200) NOT NULL, "Route_Path" nvarchar(200) NOT NULL, "Physical_Path" nvarchar(500) NOT NULL, "Is_Require_Auth" bit NOT NULL, "Is_Main" BIT NOT NULL CONSTRAINT "PK_c8ac399c3f45c21c35c2184eb2d" PRIMARY KEY ("Menu_Route_ID"))`,
     );
   }
 
