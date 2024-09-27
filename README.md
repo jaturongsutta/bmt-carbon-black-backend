@@ -32,6 +32,17 @@
 $ pnpm install
 ```
 
+# environment (.env)
+
+ENV=develop
+APP_PORT = 86
+DB_HOST = localhost
+DB_PORT = 1433
+DB_USERNAME = sa
+DB_PASSWORD = [password]
+DB_NAME = BMT_CB
+ENV_DEVELOP_DIR = ./application-files/
+
 ## Compile and run the project
 
 ```bash
