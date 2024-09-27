@@ -24,6 +24,8 @@
 
 ## Description
 
+Nodejs version : 22.2.0
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Project setup
@@ -34,6 +36,7 @@ $ pnpm install
 
 # environment (.env)
 
+```bash
 ENV=develop
 APP_PORT = 86
 DB_HOST = localhost
@@ -42,6 +45,7 @@ DB_USERNAME = sa
 DB_PASSWORD = [password]
 DB_NAME = BMT_CB
 ENV_DEVELOP_DIR = ./application-files/
+```
 
 ## Compile and run the project
 
