@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('co_Predefine')
+@Entity('co_predefine')
 export class Predefine {
   @PrimaryColumn({ length: 20, name: 'Predefine_Group' })
   predefineGroup: string;
