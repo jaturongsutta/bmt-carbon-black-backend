@@ -6,7 +6,7 @@ export class SeedRoleData1726025309311 implements MigrationInterface {
 
         SET IDENTITY_INSERT um_Role ON;
 
-      INSERT INTO um_Role (Role_ID, Role_Name_TH, Role_Name_EN, Is_Active, Create_By, Create_Date, Update_By, Update_Date)
+      INSERT INTO um_Role (Role_ID, Role_Name_TH, Role_Name_EN, Is_Active, Created_By, Created_Date, Updated_By, Updated_Date)
       VALUES 
         (1, 'ผู้ดูแลระบบ', 'Administrator', 'Y', 1, GETDATE(), 1, GETDATE()),
         (2, 'ผู้ใช้งานทั่วไป', 'User', 'Y', 1, GETDATE(), 1, GETDATE());

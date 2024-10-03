@@ -26,22 +26,22 @@ export class Predefine {
   @Column({ length: 1, name: 'Is_Active' })
   isActive: string;
 
-  @Column({ name: 'Create_By', type: 'int', nullable: true })
+  @Column({ name: 'Created_By', type: 'int', nullable: true })
   createBy: number;
 
   @CreateDateColumn({
-    name: 'Create_Date',
+    name: 'Created_Date',
     type: 'datetime',
     nullable: true,
     default: () => 'GETDATE()',
   })
   createDate: Date;
 
-  @Column({ name: 'Update_By', type: 'int', nullable: true })
+  @Column({ name: 'Updated_By', type: 'int', nullable: true })
   updateBy: number;
 
   @UpdateDateColumn({
-    name: 'Update_Date',
+    name: 'Updated_Date',
     type: 'datetime',
     nullable: true,
     default: () => 'GETDATE()',

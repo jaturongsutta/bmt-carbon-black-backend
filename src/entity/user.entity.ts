@@ -33,21 +33,21 @@ export class User {
   @Column({ name: 'Is_Active', nullable: true, length: 1 })
   isActive: string;
 
-  @Column({ name: 'Create_By', nullable: true, type: 'int' })
+  @Column({ name: 'Created_By', nullable: true, type: 'int' })
   createdBy: number;
 
   @CreateDateColumn({
-    name: 'Create_Date',
+    name: 'Created_Date',
     nullable: true,
     type: 'datetime',
   })
   createdDate: Date;
 
-  @Column({ name: 'Update_By', nullable: true, type: 'int' })
+  @Column({ name: 'Updated_By', nullable: true, type: 'int' })
   updateBy: number;
 
   @UpdateDateColumn({
-    name: 'Update_Date',
+    name: 'Updated_Date',
     nullable: true,
     type: 'datetime',
   })

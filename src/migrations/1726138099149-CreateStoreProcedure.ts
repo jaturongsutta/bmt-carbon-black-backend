@@ -61,7 +61,7 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         SELECT ROW_NUMBER() OVER (ORDER by USER_ID, Username,First_Name) as Row_Num,
           x.*
         FROM ( 
-          SELECT USER_ID, Username, First_Name, Last_Name, Position_Name, Is_Active, dbo.fn_um_get_Username(Create_By) Create_By , Create_Date
+          SELECT USER_ID, Username, First_Name, Last_Name, Position_Name, Is_Active, dbo.fn_um_get_Username(Created_By) Created_By , Created_Date
           FROM um_User
           WHERE 1=1
             AND (Username like '%' + isnull(@User_Name,'') + '%' or isnull(@User_Name,'') = '')
@@ -148,8 +148,8 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
           p.Description,
           CASE WHEN @Language = 'EN' THEN s.Value_EN 
             ELSE s.Value_TH END Status_Name,
-          dbo.fn_um_get_Username(p.Create_By) Created_By, p.Create_Date ,
-          dbo.fn_um_get_Username(p.Update_By) Updated_By , p.Update_Date
+          dbo.fn_um_get_Username(p.Created_By) Created_By, p.Created_Date ,
+          dbo.fn_um_get_Username(p.Updated_By) Updated_By , p.Updated_Date
         FROM co_Predefine p
           left outer join co_Predefine s
           on s.Predefine_Group = 'Is_Active'
@@ -336,8 +336,8 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
         )
         INSERT INTO #Temp_Result
         SELECT ROW_NUMBER() OVER (ORDER BY  Role_ID, Role_Name_EN ) AS Row_Num 
-          , Role_ID, Role_Name_EN, Role_Name_TH, Is_Active, dbo.fn_um_get_Username(Create_By) Create_By , Create_Date
-          , dbo.fn_um_get_Username(Update_By) Updated_By, Update_Date
+          , Role_ID, Role_Name_EN, Role_Name_TH, Is_Active, dbo.fn_um_get_Username(Created_By) Created_By , Created_Date
+          , dbo.fn_um_get_Username(Updated_By) Updated_By, Updated_Date
         FROM um_Role
         WHERE 1=1
           AND (Role_Name_EN like '%' + isnull(@Role_Name_EN,'') + '%' or isnull(@Role_Name_EN,'') = '')
@@ -370,10 +370,10 @@ export class CreateStoreProcedure1726138099149 implements MigrationInterface {
           mn.URL,
           mn.Menu_Group,
           dbo.fn_co_get_Predefine('Is_Active', mn.Is_Active, @Language) AS Status,
-          dbo.fn_um_get_Username(mn.Created_By) AS Create_By,
-          CONVERT(VARCHAR, mn.Created_Date, 103) AS Create_Date_Display,
-          dbo.fn_um_get_Username(mn.Updated_by) AS Update_By,
-          CONVERT(VARCHAR, mn.Updated_Date, 103) AS Update_Date_Display,
+          dbo.fn_um_get_Username(mn.Created_By) AS Created_By,
+          CONVERT(VARCHAR, mn.Created_Date, 103) AS Created_Date_Display,
+          dbo.fn_um_get_Username(mn.Updated_by) AS Updated_By,
+          CONVERT(VARCHAR, mn.Updated_Date, 103) AS Updated_Date_Display,
           mn.Created_By,
           mn.Updated_Date,
           mn.Is_Active
