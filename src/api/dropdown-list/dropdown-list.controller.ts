@@ -23,4 +23,24 @@ export class DropdownListController extends BaseController {
   getPredefine(@Request() req: any, @Param('group') group: string) {
     return this.service.getPredefine(group, req.headers.language);
   }
+
+  @Get('line-tank')
+  getLineTank(@Request() req: any) {
+    return this.service.getDropdownList(
+      'co_line',
+      'tank',
+      'tank',
+      "Is_Active = 'Y'",
+    );
+  }
+
+  @Get('product')
+  getProduct(@Request() req: any) {
+    return this.service.getDropdownList(
+      'co_product',
+      'product_id',
+      'product_name',
+      "Is_Active = 'Y'",
+    );
+  }
 }

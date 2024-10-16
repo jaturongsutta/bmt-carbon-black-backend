@@ -12,6 +12,7 @@ import { PredefineModule } from './api/predefine/predefine.module';
 import { DropdownListModule } from './api/dropdown-list/dropdown-list.module';
 import { RolePermissionModule } from './api/role-permission/role-permission.module';
 import { ApplicationLogModule } from './api/application-log/application-log.module';
+import { TankShippingModule } from './api/tank-shipping/tank-shipping.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -41,6 +42,7 @@ dotenv.config(); // Load environment variables from .env file
     UserModule,
     DropdownListModule,
     RolePermissionModule,
+    TankShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
