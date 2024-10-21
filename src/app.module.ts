@@ -13,6 +13,7 @@ import { DropdownListModule } from './api/dropdown-list/dropdown-list.module';
 import { RolePermissionModule } from './api/role-permission/role-permission.module';
 import { ApplicationLogModule } from './api/application-log/application-log.module';
 import { TankShippingModule } from './api/tank-shipping/tank-shipping.module';
+import { FailedManagementModule } from './api/failed-management/failed-management.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -43,6 +44,7 @@ dotenv.config(); // Load environment variables from .env file
     DropdownListModule,
     RolePermissionModule,
     TankShippingModule,
+    FailedManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
