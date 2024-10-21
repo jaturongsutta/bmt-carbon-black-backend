@@ -15,6 +15,7 @@ import { ApplicationLogModule } from './api/application-log/application-log.modu
 import { TankShippingModule } from './api/tank-shipping/tank-shipping.module';
 import { FailedManagementModule } from './api/failed-management/failed-management.module';
 import { ProductionDailyVolumnRecordModule } from './api/production-daily-volumn-record/production-daily-volumn-record.module';
+import { CoSystemParametersModule } from './api/co-system-parameters/co-system-parameters.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -38,6 +39,7 @@ dotenv.config(); // Load environment variables from .env file
     UserModule,
     AuthModule,
     CommonModule,
+    CoSystemParametersModule,
     MenuModule,
     MenuRouteModule,
     PredefineModule,
