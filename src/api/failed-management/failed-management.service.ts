@@ -132,7 +132,7 @@ export class FailedManagementService {
       req.input('Failed_Id', id);
       req.input('Failed_Value', data.failedValue);
       req.input('Final_Prod2', data.finalProd2);
-      req.input('Create_By', userId);
+      req.input('Update_By', userId);
       req.output('Return_CD', '');
       req.output('Return_Name', '');
 
