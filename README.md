@@ -43,7 +43,7 @@ DB_HOST = localhost
 DB_PORT = 1433
 DB_USERNAME = sa
 DB_PASSWORD = [password]
-DB_NAME = BMT_CB
+DB_NAME = BSCB_CB
 ENV_DEVELOP_DIR = ./application-files/
 ```
 
