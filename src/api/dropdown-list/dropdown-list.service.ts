@@ -17,7 +17,7 @@ export class DropdownListService {
   }
 
   async getPredefine(group: string, language: string) {
-    const sql = `SELECT predefine_group, predefine_cd as value, case when '${language}' = 'TH' then Value_TH else Value_EN end as text 
+    const sql = `SELECT predefine_group, predefine_cd as value, case when '${language}' = 'TH' then Value_TH else Value_EN end as title 
     ,predefine_cd , Value_TH , Value_EN
     FROM co_predefine WHERE predefine_group = '${group}' and is_active = 'Y'   `;
     return await this.predefineRepository.query(sql);
@@ -45,5 +45,56 @@ export class DropdownListService {
       }
     }
     return menus;
+  }
+
+  // Overload signatures
+  async getDropdownList(
+    tableName: string,
+    colValue: string,
+    colText: string,
+  ): Promise<any[]>;
+  async getDropdownList(
+    tableName: string,
+    colValue: string,
+    colText: string,
+    whereCondition: string,
+  ): Promise<any[]>;
+  async getDropdownList(
+    tableName: string,
+    colValue: string,
+    colText: string,
+    whereCondition: string,
+    orderby: string,
+  ): Promise<any[]>;
+
+  // Implementation that matches all the above signatures
+  async getDropdownList(
+    tableName: string,
+    colValue: string,
+    colText: string,
+    whereCondition?: string,
+    orderby?: string,
+  ): Promise<any[]> {
+    let data = [];
+    let sql = `SELECT ${colValue} as col_value, ${colText} as col_text FROM ${tableName}`;
+
+    if (whereCondition) {
+      sql += ' WHERE 1 = 1 AND ' + whereCondition;
+    }
+
+    if (orderby) {
+      sql += ' ORDER BY ' + orderby; // Fixed to use `orderby` instead of `whereCondition`
+    }
+
+    let result = await this.predefineRepository.query(sql);
+
+    for (let i = 0; i < result.length; i++) {
+      data.push({
+        value: `${result[i]['col_value']}`,
+        title: `${result[i]['col_text']}`,
+      });
+    }
+
+    return data;
   }
 }
