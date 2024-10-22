@@ -5,13 +5,14 @@ export class ProductionDailyVolumnRecordDto extends BaseDto {
   line: string;
   grade: string;
   productName: string;
+  filename: string;
 
   shifts: ProductionDailyVolumnRecordShift[];
 }
 
 export class ProductionDailyVolumnRecordShift {
   Shift: string;
-  Operating_Time: string;
+  Shift_Oper_Time: string;
   Shift_Start: string;
   Shift_End: string;
   T1_Production_CBO: string;

@@ -15,17 +15,18 @@ import { ProductionDailyVolumnRecordService } from './production-daily-volumn-re
 import { ProductionDailyVolumnRecordSearchDto } from './dto/production-daily-volumn-record-search.dto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Response } from 'express';
+import e, { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CoSystemParametersService } from '../co-system-parameters/co-system-parameters.service';
+import { ProductionDailyVolumnRecordDto } from './dto/production-daily-volumn-record.dto';
 
 @Controller('production-daily-volumn-record')
-export class ProductionDailyVolumnRecordController {
+export class ProductionDailyVolumnRecordController extends BaseController {
   constructor(
     private service: ProductionDailyVolumnRecordService,
     private coSystemParameterService: CoSystemParametersService,
   ) {
-    // super();
+    super();
   }
 
   @Post('search')
@@ -70,10 +71,10 @@ export class ProductionDailyVolumnRecordController {
   //   return await this.service.getById(id);
   // }
 
-  // @Post('add')
-  // async add(@Body() dto: TankShippingDto, @Request() req: any) {
-  //   return await this.service.add(dto, req.user.userId);
-  // }
+  @Post('add')
+  async add(@Body() dto: ProductionDailyVolumnRecordDto, @Request() req: any) {
+    return await this.service.add(dto, req.user.userId);
+  }
 
   // @Put('update/:id')
   // async update(
@@ -82,10 +83,5 @@ export class ProductionDailyVolumnRecordController {
   //   @Request() req: any,
   // ) {
   //   return await this.service.update(id, dto, req.user.userId);
-  // }
-
-  // @Delete('delete/:id')
-  // async delete(@Param('id') id: number, @Request() req: any) {
-  //   return await this.service.delete(id, req.user.userId);
   // }
 }
