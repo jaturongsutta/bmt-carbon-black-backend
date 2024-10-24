@@ -2,7 +2,7 @@ import { BaseDto } from 'src/common/base-dto';
 
 export class TankShippingDto extends BaseDto {
   tankShippingId: number;
-  linkTank: string;
+  lineTank: string;
   product: string;
   date: string;
   grade: string;

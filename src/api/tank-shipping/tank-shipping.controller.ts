@@ -29,9 +29,15 @@ export class TankShippingController extends BaseController {
     return await this.service.getById(id);
   }
 
-  @Get('getAdjectValue/:totalQty')
-  async getAdjectValue(@Param('totalQty') totalQty: number) {
-    return await this.service.getAdjectValue(totalQty);
+  @Post('getAdjectValue')
+  async getAdjectValue(@Body() dto: TankShippingDto) {
+    return await this.service.getAdjectValue(
+      dto.date,
+      dto.lineTank,
+      dto.grade,
+      dto.productName,
+      dto.totalQty,
+    );
   }
 
   @Post('add')
