@@ -1,11 +1,13 @@
 import { BaseDto } from 'src/common/base-dto';
 
 export class ProductionDailyVolumnRecordDto extends BaseDto {
+  prodDailyId: number;
   date: string;
   line: string;
   grade: string;
   productName: string;
   filename: string;
+  filedata: string;
 
   shifts: ProductionDailyVolumnRecordShift[];
 }
@@ -23,10 +25,11 @@ export class ProductionDailyVolumnRecordShift {
   T1_EKINEN_EBO: string;
   T1_EKINEN_FCC: string;
   T1_EKINEN_EKN_Total: string;
-  T1_EKINEN_FS_Oil_All_CBO: string;
-  T1_EKINEN_FS_Oil_All_EBO: string;
-  T1_EKINEN_FS_Oil_All_FCC: string;
-  T1_EKINEN_FS_Oil_All_Total: string;
+
+  T1_PRODUCTION_EKINEN_EBO: string;
+  T1_PRODUCTION_EKINEN_CBO: string;
+  T1_PRODUCTION_EKINEN_FCC: string;
+  T1_PRODUCTION_EKINEN_Total: string;
 
   T2_NG_Production: string;
   T2_NG_Production_Total: string;
@@ -51,4 +54,15 @@ export class ProductionDailyVolumnRecordShift {
   T3_KOH_Mixing_Other: string;
   T3_NaOH_Consumption_Other: string;
   T3_Recycle_Hopper_Level_Other: string;
+
+  storageTanks: ProductionDailyVolumnStorageTank[];
+}
+
+export class ProductionDailyVolumnStorageTank {
+  Shift: string;
+  Tank: string;
+  Tank_Start_Time: string;
+  Tank_Stop_Time: string;
+  Reason: string;
+  Full_Tank: string;
 }

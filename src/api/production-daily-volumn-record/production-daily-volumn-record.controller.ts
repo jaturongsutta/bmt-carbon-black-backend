@@ -66,22 +66,79 @@ export class ProductionDailyVolumnRecordController extends BaseController {
     }
   }
 
-  // @Get('getById/:id')
-  // async getById(@Param('id') id: number) {
-  //   return await this.service.getById(id);
-  // }
+  @Get('get-by-id/:id')
+  async getById(@Param('id') id: number) {
+    return await this.service.getById(id);
+  }
 
   @Post('add')
   async add(@Body() dto: ProductionDailyVolumnRecordDto, @Request() req: any) {
+    if (dto.filedata && dto.filedata.length > 0) {
+      dto.filename = this.renameFilenameWithDateTime(dto.filename);
+      await this.saveFile(dto.filename, dto.filedata);
+    }
     return await this.service.add(dto, req.user.userId);
   }
 
-  // @Put('update/:id')
-  // async update(
-  //   @Param('id') id: number,
-  //   @Body() dto: TankShippingDto,
-  //   @Request() req: any,
-  // ) {
-  //   return await this.service.update(id, dto, req.user.userId);
-  // }
+  @Put('update/:id')
+  async update(
+    @Param('id') id: number,
+    @Body() dto: ProductionDailyVolumnRecordDto,
+    @Request() req: any,
+  ) {
+    if (dto.filedata && dto.filedata.length > 0) {
+      dto.filename = this.renameFilenameWithDateTime(dto.filename);
+      await this.saveFile(dto.filename, dto.filedata);
+    }
+
+    return await this.service.update(id, dto, req.user.userId);
+  }
+
+  async saveFile(filename: string, filedata: any) {
+    const systemParams =
+      await this.coSystemParameterService.findbyType('Prod_Daily');
+    const directoryPath =
+      process.env.ENV === 'develop'
+        ? path.join(process.env.ENV_DEVELOP_DIR, 'Prod_Daily')
+        : systemParams.paramValue;
+
+    const dataFile = filedata.split(',')[1];
+    const buffer = Buffer.from(dataFile, 'base64');
+
+    const savePath = path.join(directoryPath, filename);
+
+    // Ensure the directory exists
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+    fs.writeFileSync(savePath, buffer);
+  }
+
+  renameFilenameWithDateTime(originalFilename: string): string {
+    // Get current date and time
+    const now = new Date();
+
+    // Format date and time as 'yyyyMMddHHmmss'
+    const dateTimeFormat = `${now.getFullYear()}${(now.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now
+      .getHours()
+      .toString()
+      .padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now
+      .getSeconds()
+      .toString()
+      .padStart(2, '0')}`;
+
+    // Extract the file extension
+    const extensionMatch = originalFilename.match(/\.[0-9a-z]+$/i);
+    const extension = extensionMatch ? extensionMatch[0] : '';
+
+    // Remove the extension from the original filename
+    const filenameWithoutExtension = originalFilename.replace(/\.[^/.]+$/, '');
+
+    // Concatenate the filename, date-time string, and extension
+    const newFilename = `${filenameWithoutExtension}_${dateTimeFormat}${extension}`;
+
+    return newFilename;
+  }
 }

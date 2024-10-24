@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import {
   ProductionDailyVolumnRecordDto,
   ProductionDailyVolumnRecordShift,
+  ProductionDailyVolumnStorageTank,
 } from './dto/production-daily-volumn-record.dto';
 import { BaseResponse } from 'src/common/base-response';
 @Injectable()
@@ -23,18 +24,78 @@ export class ProductionDailyVolumnRecordService {
     return await this.commonService.getSearch('sp_search_prod_daily', req);
   }
 
+  async getById(id: number): Promise<ProductionDailyVolumnRecordDto> {
+    const dto = new ProductionDailyVolumnRecordDto();
+    try {
+      let req = await this.commonService.getConnection();
+      req.input('Prod_Daily_Id', id);
+      req.output('Return_CD', '');
+      req.output('Return_Name', '');
+
+      let result = await this.commonService.executeStoreProcedure(
+        'sp_search_prod_daily_detail',
+        req,
+      );
+
+      const { Return_CD, Return_Name } = result.output;
+      if (Return_CD === 'Success') {
+        const data = result.recordset[0];
+
+        dto.date = data.Date;
+        dto.line = data.Line;
+        dto.grade = data.Grade;
+        dto.productName = data.Product_Name;
+        dto.filename = data.File_Name;
+
+        const shifts = result.recordsets[1];
+
+        const shift1 = this.setShift(shifts[0]);
+        const shift2 = this.setShift(shifts[1]);
+        const shift3 = this.setShift(shifts[2]);
+
+        dto.shifts = [shift1, shift2, shift3];
+
+        console.log(result.recordsets[2]);
+      } else {
+        dto.result.status = 1;
+        dto.result.message = Return_Name;
+      }
+    } catch (error) {
+      dto.result.status = 2;
+      dto.result.message = error.message;
+    }
+
+    return dto;
+  }
+
   async add(
     data: ProductionDailyVolumnRecordDto,
     userId: number,
   ): Promise<BaseResponse> {
     try {
-      const shift1 = this.getMappingData(data, data.shifts[0]);
-      const shift2 = this.getMappingData(data, data.shifts[1]);
-      const shift3 = this.getMappingData(data, data.shifts[2]);
+      const shift1 = this.getMappingData(data.shifts[0]);
+      const shift2 = this.getMappingData(data.shifts[1]);
+      const shift3 = this.getMappingData(data.shifts[2]);
 
       const itemData = [...shift1, ...shift2, ...shift3];
 
+      // const storageTanks = [
+      //   ...data.shifts[0].storageTanks,
+      //   ...data.shifts[1].storageTanks,
+      //   ...data.shifts[2].storageTanks,
+      // ];
+      const storageTanks = await data.shifts.reduce((acc, shift) => {
+        return acc.concat(shift.storageTanks);
+      }, []);
+      storageTanks.map((item) => {
+        item.Full_Tank = item.Full_Tank !== 'Y' ? 'N' : 'Y';
+      });
+
+      console.log(storageTanks);
+
       const listFileUpload = JSON.stringify(itemData);
+      const listStorageTankUpload = JSON.stringify(storageTanks);
+
       let req = await this.commonService.getConnection();
       req.input('Date', data.date);
       req.input('Line', data.line);
@@ -42,13 +103,65 @@ export class ProductionDailyVolumnRecordService {
       req.input('ProductName', data.productName);
       req.input('FileName', data.filename);
       req.input('ListFileUpload', listFileUpload);
+      req.input('ListStorageTankUpload', listStorageTankUpload);
 
       req.input('Create_By', userId);
       req.output('Return_CD', '');
       req.output('Return_Name', '');
 
       let result = await this.commonService.executeStoreProcedure(
-        'sp_add_tank_shipping',
+        'sp_add_prod_daily',
+        req,
+      );
+
+      const { Return_CD, Return_Name } = result.output;
+
+      return {
+        status: Return_CD !== 'Success' ? 1 : 0,
+        message: Return_Name,
+      };
+    } catch (error) {
+      return {
+        status: 2,
+        message: error.message,
+      };
+    }
+  }
+
+  async update(
+    id: number,
+    data: ProductionDailyVolumnRecordDto,
+    userId: number,
+  ): Promise<BaseResponse> {
+    try {
+      const shift1 = this.getMappingData(data.shifts[0]);
+      const shift2 = this.getMappingData(data.shifts[1]);
+      const shift3 = this.getMappingData(data.shifts[2]);
+
+      const itemData = [...shift1, ...shift2, ...shift3];
+      const storageTanks = await data.shifts.reduce((acc, shift) => {
+        return acc.concat(shift.storageTanks);
+      }, []);
+      storageTanks.map((item) => {
+        item.Full_Tank = item.Full_Tank !== 'Y' ? 'N' : 'Y';
+      });
+      const listFileUpload = JSON.stringify(itemData);
+      const listStorageTankUpload = JSON.stringify(storageTanks);
+
+      console.log(listFileUpload);
+
+      let req = await this.commonService.getConnection();
+      req.input('Prod_Daily_Id', id);
+      req.input('FileName', data.filename);
+      req.input('ListFileUpload', listFileUpload);
+      req.input('ListStorageTankUpload', listStorageTankUpload);
+
+      req.input('Update_By', userId);
+      req.output('Return_CD', '');
+      req.output('Return_Name', '');
+
+      let result = await this.commonService.executeStoreProcedure(
+        'sp_update_prod_daily',
         req,
       );
 
@@ -92,12 +205,79 @@ export class ProductionDailyVolumnRecordService {
     return dto;
   }
 
+  setShift(data: any): ProductionDailyVolumnRecordShift {
+    const shift = new ProductionDailyVolumnRecordShift();
+
+    shift.Shift = data.Shift ?? null;
+    shift.Shift_Oper_Time = data.Shift_Oper_Time ?? null;
+    shift.Shift_Start = data.Shift_Start ?? null;
+    shift.Shift_End = data.Shift_End ?? null;
+    shift.T1_EKINEN_CBO = data.T1_EKINEN_CBO ?? 0;
+    shift.T1_EKINEN_EBO = data.T1_EKINEN_EBO ?? 0;
+    shift.T1_EKINEN_FCC = data.T1_EKINEN_FCC ?? 0;
+    shift.T1_EKINEN_EKN_Total = data.T1_EKINEN_EKN_Total ?? 0;
+
+    shift.T1_PRODUCTION_EKINEN_CBO = data.T1_PRODUCTION_EKINEN_CBO ?? 0;
+    shift.T1_PRODUCTION_EKINEN_EBO = data.T1_PRODUCTION_EKINEN_EBO ?? 0;
+    shift.T1_PRODUCTION_EKINEN_FCC = data.T1_PRODUCTION_EKINEN_FCC ?? 0;
+    shift.T1_PRODUCTION_EKINEN_Total = data.T1_PRODUCTION_EKINEN_Total ?? 0;
+    shift.T1_Production_CBO = data.T1_Production_CBO ?? 0;
+    shift.T1_Production_EBO = data.T1_Production_EBO ?? 0;
+    shift.T1_Production_FCC = data.T1_Production_FCC ?? 0;
+    shift.T1_Production_Prod_Total = data.T1_Production_Prod_Total ?? 0;
+    shift.T1_PRODUCTION_EKINEN_CBO = data['T1_PRODUCTION+EKINEN_CBO'] ?? 0;
+    shift.T1_PRODUCTION_EKINEN_EBO = data['T1_PRODUCTION+EKINEN_EBO'] ?? 0;
+    shift.T1_PRODUCTION_EKINEN_FCC = data['T1_PRODUCTION+EKINEN_FCC'] ?? 0;
+    shift.T1_PRODUCTION_EKINEN_Total = data['T1_PRODUCTION+EKINEN_Total'] ?? 0;
+    shift.T2_NG_Drying = data.T2_NG_Drying ?? 0;
+    shift.T2_NG_Drying_Total = data.T2_NG_Drying_Total ?? 0;
+    shift.T2_NG_Oil_Spray_checking = data.T2_NG_Oil_Spray_checking ?? 0;
+    shift.T2_NG_Oil_Spray_checking_Total =
+      data.T2_NG_Oil_Spray_checking_Total ?? 0;
+    shift.T2_NG_Preheat = data.T2_NG_Preheat ?? 0;
+    // shift.T2_NG_Preheat_Total = data.T2_NG_Preheat_Total ?? 0;
+    shift.T2_NG_Production = data.T2_NG_Production ?? 0;
+    shift.T2_NG_Production_Total = data.T2_NG_Production_Total ?? 0;
+    shift.T2_NG_Warm_up = data.T2_NG_Warm_up ?? 0;
+    shift.T2_NG_Warm_up_Total = data.T2_NG_Warm_up_Total ?? 0;
+    shift.T3_Discharged_Volume_Other = data.T3_Discharged_Volume_Other ?? 0;
+    shift.T3_Hoist_Other = data.T3_Hoist_Other ?? 0;
+    shift.T3_Kande_Other = data.T3_Kande_Other ?? 0;
+    shift.T3_KOH_Mixing_Other = data.T3_KOH_Mixing_Other ?? 0;
+    shift.T3_Mixing_Other = data.T3_Mixing_Other ?? 0;
+    shift.T3_NaOH_Consumption_Other = data.T3_NaOH_Consumption_Other ?? 0;
+    shift.T3_Recycle_Hopper_Level_Other =
+      data.T3_Recycle_Hopper_Level_Other ?? 0;
+    // shift.T4_S1_Tank_Full_Tank_No_1 = data.T4_S1_Tank_Full_Tank_No_1 ?? null;
+    // shift.T4_S1_Tank_Full_Tank_No_2 = data.T4_S1_Tank_Full_Tank_No_2 ?? null;
+    // shift.T4_S1_Tank_No_1 = data.T4_S1_Tank_No_1 ?? null;
+    // shift.T4_S1_Tank_No_2 = data.T4_S1_Tank_No_2 ?? null;
+    // shift.T4_S1_Tank_Reason_No_1 = data.T4_S1_Tank_Reason_No_1 ?? null;
+    // shift.T4_S1_Tank_Reason_No_2 = data.T4_S1_Tank_Reason_No_2 ?? null;
+    // shift.T4_S1_Tank_Start_Time_No_1 = data.T4_S1_Tank_Start_Time_No_1 ?? null;
+    // shift.T4_S1_Tank_Start_Time_No_2 = data.T4_S1_Tank_Start_Time_No_2 ?? null;
+    // shift.T4_S1_Tank_Stop_Time_No_1 = data.T4_S1_Tank_Stop_Time_No_1 ?? null;
+    // shift.T4_S1_Tank_Stop_Time_No_2 = data.T4_S1_Tank_Stop_Time_No_2 ?? null;
+    // shift.T4_S2_Tank_Full_Tank_No_3 = data.T4_S2_Tank_Full_Tank_No_3 ?? null;
+    // shift.T4_S2_Tank_Full_Tank_No_6 = data.T4_S2_Tank_Full_Tank_No_6 ?? null;
+    // shift.T4_S2_Tank_No_3 = data.T4_S2_Tank_No_3 ?? null;
+    // shift.T4_S2_Tank_No_6 = data.T4_S2_Tank_No_6 ?? null;
+    // shift.T4_S2_Tank_Reason_No_3 = data.T4_S2_Tank_Reason_No_3 ?? null;
+    // shift.T4_S2_Tank_Reason_No_6 = data.T4_S2_Tank_Reason_No_6 ?? null;
+    // shift.T4_S2_Tank_Start_Time_No_3 = data.T4_S2_Tank_Start_Time_No_3 ?? null;
+    // shift.T4_S2_Tank_Start_Time_No_6 = data.T4_S2_Tank_Start_Time_No_6 ?? null;
+    // shift.T4_S2_Tank_Stop_Time_No_3 = data.T4_S2_Tank_Stop_Time_No_3 ?? null;
+    // shift.T4_S2_Tank_Stop_Time_No_6 = data.T4_S2_Tank_Stop_Time_No_6 ?? null;
+
+    return shift;
+  }
+
   getShift1(worksheet: any) {
     const shift = new ProductionDailyVolumnRecordShift();
 
-    shift.Shift = worksheet['B13'] ? worksheet['B13'].v : null;
-    shift.Shift_Start = worksheet['H23'] ? worksheet['H23'].w : null;
-    shift.Shift_End = worksheet['I23'] ? worksheet['I23'].w : null;
+    shift.Shift = this.excelSheetValue(worksheet, 'B13');
+    shift.Shift_Start = this.excelSheetText(worksheet, 'H23');
+    shift.Shift_End = this.excelSheetText(worksheet, 'I23');
 
     if (shift.Shift_Start) {
       shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
@@ -108,58 +288,83 @@ export class ProductionDailyVolumnRecordService {
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
-      const shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      const shiftEnd = moment(shift.Shift_End, 'HH:mm');
+      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
+      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
+
+      // Check if Shift_Start is greater than Shift_End
+      if (shiftStart.isAfter(shiftEnd)) {
+        shiftEnd.add(1, 'day');
+      }
+
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
       shift.Shift_Oper_Time = hours.toString();
     }
 
     // ตาราง Feedstock Oil Consumption
-    shift.T1_Production_EBO = worksheet['C13'] ? worksheet['C13'].v : null;
-    shift.T1_Production_CBO = worksheet['D13'] ? worksheet['D13'].v : null;
-    shift.T1_Production_FCC = worksheet['E13'] ? worksheet['E13'].v : null;
-    shift.T1_Production_Prod_Total = worksheet['F13']
-      ? worksheet['F13'].v
-      : null;
+    shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C13');
+    shift.T1_Production_CBO = this.excelSheetValue(worksheet, 'D13');
+    shift.T1_Production_FCC = this.excelSheetValue(worksheet, 'E13');
+    shift.T1_Production_Prod_Total = this.excelSheetValue(worksheet, 'F13');
 
-    shift.T1_EKINEN_EBO = worksheet['G13'] ? worksheet['G13'].v : null;
-    shift.T1_EKINEN_CBO = worksheet['H13'] ? worksheet['H13'].v : null;
-    shift.T1_EKINEN_FCC = worksheet['I13'] ? worksheet['I13'].v : null;
-    shift.T1_EKINEN_EKN_Total = worksheet['J13'] ? worksheet['J13'].v : null;
+    shift.T1_EKINEN_EBO = this.excelSheetValue(worksheet, 'G13');
+    shift.T1_EKINEN_CBO = this.excelSheetValue(worksheet, 'H13');
+    shift.T1_EKINEN_FCC = this.excelSheetValue(worksheet, 'I13');
+    shift.T1_EKINEN_EKN_Total = this.excelSheetValue(worksheet, 'J13');
 
-    shift.T1_EKINEN_FS_Oil_All_CBO =
+    shift.T1_PRODUCTION_EKINEN_CBO =
       shift.T1_Production_CBO + shift.T1_EKINEN_CBO;
-    shift.T1_EKINEN_FS_Oil_All_EBO =
+    shift.T1_PRODUCTION_EKINEN_EBO =
       shift.T1_Production_EBO + shift.T1_EKINEN_EBO;
-    shift.T1_EKINEN_FS_Oil_All_FCC =
+    shift.T1_PRODUCTION_EKINEN_FCC =
       shift.T1_Production_FCC + shift.T1_EKINEN_FCC;
-    shift.T1_EKINEN_FS_Oil_All_Total =
+    shift.T1_PRODUCTION_EKINEN_Total =
       shift.T1_Production_Prod_Total + shift.T1_EKINEN_EKN_Total;
 
-    //ตาราง FUEL
+    // ตาราง FUEL
+    shift.T2_NG_Production = this.excelSheetValue(worksheet, 'M13');
+    shift.T2_NG_Warm_up = this.excelSheetValue(worksheet, 'N13');
+    shift.T2_NG_Preheat = this.excelSheetValue(worksheet, 'O13');
+    shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S13');
+    shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T13');
+    shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U13');
+    shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q13');
 
-    shift.T2_NG_Production = worksheet['M13'] ? worksheet['M13'].v : null;
-    shift.T2_NG_Warm_up = worksheet['N13'] ? worksheet['N13'].v : null;
-    shift.T2_NG_Preheat = worksheet['O13'] ? worksheet['O13'].v : null;
-    shift.T2_EBO_Preheat = worksheet['S13'] ? worksheet['S13'].v : null;
-    shift.T2_CBO_Preheat = worksheet['T13'] ? worksheet['T13'].v : null;
-    shift.T2_FCC_Preheat = worksheet['U13'] ? worksheet['U13'].v : null;
-    shift.T2_NG_Oil_Spray_checking = worksheet['Q13']
-      ? worksheet['Q13'].v
-      : null;
+    shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V13');
+    shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X13');
+    shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z13');
+    shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD13');
 
-    shift.T3_Mixing_Other = worksheet['V13'] ? worksheet['V13'].v : null;
-    shift.T3_Hoist_Other = worksheet['X13'] ? worksheet['X13'].v : null;
-    shift.T3_Kande_Other = worksheet['Z13'] ? worksheet['Z13'].v : null;
-    shift.T3_Discharged_Volume_Other = worksheet['AD13']
-      ? worksheet['AD13'].v
-      : null;
+    shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF13');
+    shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH13');
 
-    shift.T3_KOH_Mixing_Other = worksheet['AF13'] ? worksheet['AF13'].v : null;
-    shift.T3_NaOH_Consumption_Other = worksheet['AH13']
-      ? worksheet['AH13'].v
-      : null;
+    const storageTank = new ProductionDailyVolumnStorageTank();
+
+    storageTank.Shift = '1';
+    storageTank.Tank = this.excelSheetValue(worksheet, 'C40');
+    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'D40');
+    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'E40');
+    storageTank.Reason = this.excelSheetValue(worksheet, 'F40');
+    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'J40');
+    if (storageTank.Full_Tank) {
+      storageTank.Full_Tank = 'Y';
+    }
+    if (storageTank.Tank_Start_Time) {
+      storageTank.Tank_Start_Time = moment(
+        storageTank.Tank_Start_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+    if (storageTank.Tank_Stop_Time) {
+      storageTank.Tank_Stop_Time = moment(
+        storageTank.Tank_Stop_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+
+    console.log(storageTank);
+
+    shift.storageTanks = [storageTank];
 
     return shift;
   }
@@ -167,9 +372,9 @@ export class ProductionDailyVolumnRecordService {
   getShift2(worksheet: any) {
     const shift = new ProductionDailyVolumnRecordShift();
 
-    shift.Shift = worksheet['B14'] ? worksheet['B14'].v : null;
-    shift.Shift_Start = worksheet['V23'] ? worksheet['V23'].w : null;
-    shift.Shift_End = worksheet['W23'] ? worksheet['W23'].w : null;
+    shift.Shift = this.excelSheetValue(worksheet, 'B14');
+    shift.Shift_Start = this.excelSheetText(worksheet, 'V23');
+    shift.Shift_End = this.excelSheetText(worksheet, 'W23');
 
     if (shift.Shift_Start) {
       shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
@@ -180,58 +385,81 @@ export class ProductionDailyVolumnRecordService {
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
-      const shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      const shiftEnd = moment(shift.Shift_End, 'HH:mm');
+      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
+      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
+
+      // Check if Shift_Start is greater than Shift_End
+      if (shiftStart.isAfter(shiftEnd)) {
+        shiftEnd.add(1, 'day');
+      }
+
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
       shift.Shift_Oper_Time = hours.toString();
     }
 
     // ตาราง Feedstock Oil Consumption
-    shift.T1_Production_EBO = worksheet['C14'] ? worksheet['C14'].v : null;
-    shift.T1_Production_CBO = worksheet['D14'] ? worksheet['D14'].v : null;
-    shift.T1_Production_FCC = worksheet['E14'] ? worksheet['E14'].v : null;
-    shift.T1_Production_Prod_Total = worksheet['F14']
-      ? worksheet['F14'].v
-      : null;
+    shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C14');
+    shift.T1_Production_CBO = this.excelSheetValue(worksheet, 'D14');
+    shift.T1_Production_FCC = this.excelSheetValue(worksheet, 'E14');
+    shift.T1_Production_Prod_Total = this.excelSheetValue(worksheet, 'F14');
 
-    shift.T1_EKINEN_EBO = worksheet['G14'] ? worksheet['G14'].v : null;
-    shift.T1_EKINEN_CBO = worksheet['H14'] ? worksheet['H14'].v : null;
-    shift.T1_EKINEN_FCC = worksheet['I14'] ? worksheet['I14'].v : null;
-    shift.T1_EKINEN_EKN_Total = worksheet['J14'] ? worksheet['J14'].v : null;
+    shift.T1_EKINEN_EBO = this.excelSheetValue(worksheet, 'G14');
+    shift.T1_EKINEN_CBO = this.excelSheetValue(worksheet, 'H14');
+    shift.T1_EKINEN_FCC = this.excelSheetValue(worksheet, 'I14');
+    shift.T1_EKINEN_EKN_Total = this.excelSheetValue(worksheet, 'J14');
 
-    shift.T1_EKINEN_FS_Oil_All_CBO =
+    shift.T1_PRODUCTION_EKINEN_CBO =
       shift.T1_Production_CBO + shift.T1_EKINEN_CBO;
-    shift.T1_EKINEN_FS_Oil_All_EBO =
+    shift.T1_PRODUCTION_EKINEN_EBO =
       shift.T1_Production_EBO + shift.T1_EKINEN_EBO;
-    shift.T1_EKINEN_FS_Oil_All_FCC =
+    shift.T1_PRODUCTION_EKINEN_FCC =
       shift.T1_Production_FCC + shift.T1_EKINEN_FCC;
-    shift.T1_EKINEN_FS_Oil_All_Total =
+    shift.T1_PRODUCTION_EKINEN_Total =
       shift.T1_Production_Prod_Total + shift.T1_EKINEN_EKN_Total;
 
-    //ตาราง FUEL
+    // ตาราง FUEL
+    shift.T2_NG_Production = this.excelSheetValue(worksheet, 'M14');
+    shift.T2_NG_Warm_up = this.excelSheetValue(worksheet, 'N14');
+    shift.T2_NG_Preheat = this.excelSheetValue(worksheet, 'O14');
+    shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S14');
+    shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T14');
+    shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U14');
+    shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q14');
 
-    shift.T2_NG_Production = worksheet['M14'] ? worksheet['M14'].v : null;
-    shift.T2_NG_Warm_up = worksheet['N14'] ? worksheet['N14'].v : null;
-    shift.T2_NG_Preheat = worksheet['O14'] ? worksheet['O14'].v : null;
-    shift.T2_EBO_Preheat = worksheet['S14'] ? worksheet['S14'].v : null;
-    shift.T2_CBO_Preheat = worksheet['T14'] ? worksheet['T14'].v : null;
-    shift.T2_FCC_Preheat = worksheet['U14'] ? worksheet['U14'].v : null;
-    shift.T2_NG_Oil_Spray_checking = worksheet['Q14']
-      ? worksheet['Q14'].v
-      : null;
+    shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V14');
+    shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X14');
+    shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z14');
+    shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD14');
 
-    shift.T3_Mixing_Other = worksheet['V14'] ? worksheet['V14'].v : null;
-    shift.T3_Hoist_Other = worksheet['X14'] ? worksheet['X14'].v : null;
-    shift.T3_Kande_Other = worksheet['Z14'] ? worksheet['Z14'].v : null;
-    shift.T3_Discharged_Volume_Other = worksheet['AD14']
-      ? worksheet['AD14'].v
-      : null;
+    shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF14');
+    shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH14');
 
-    shift.T3_KOH_Mixing_Other = worksheet['AF14'] ? worksheet['AF14'].v : null;
-    shift.T3_NaOH_Consumption_Other = worksheet['AH14']
-      ? worksheet['AH14'].v
-      : null;
+    const storageTank = new ProductionDailyVolumnStorageTank();
+
+    storageTank.Shift = '2';
+    storageTank.Tank = this.excelSheetValue(worksheet, 'N40');
+    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'O40');
+    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'P40');
+    storageTank.Reason = this.excelSheetValue(worksheet, 'Q40');
+    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'X40');
+    if (storageTank.Full_Tank) {
+      storageTank.Full_Tank = 'Y';
+    }
+    if (storageTank.Tank_Start_Time) {
+      storageTank.Tank_Start_Time = moment(
+        storageTank.Tank_Start_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+    if (storageTank.Tank_Stop_Time) {
+      storageTank.Tank_Stop_Time = moment(
+        storageTank.Tank_Stop_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+
+    shift.storageTanks = [storageTank];
 
     return shift;
   }
@@ -239,9 +467,9 @@ export class ProductionDailyVolumnRecordService {
   getShift3(worksheet: any) {
     const shift = new ProductionDailyVolumnRecordShift();
 
-    shift.Shift = worksheet['B15'] ? worksheet['B15'].v : null;
-    shift.Shift_Start = worksheet['AG23'] ? worksheet['AG23'].w : null;
-    shift.Shift_End = worksheet['AH23'] ? worksheet['AH23'].w : null;
+    shift.Shift = this.excelSheetValue(worksheet, 'B15');
+    shift.Shift_Start = this.excelSheetText(worksheet, 'AG23');
+    shift.Shift_End = this.excelSheetText(worksheet, 'AH23');
 
     if (shift.Shift_Start) {
       shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
@@ -252,63 +480,86 @@ export class ProductionDailyVolumnRecordService {
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
-      const shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      const shiftEnd = moment(shift.Shift_End, 'HH:mm');
+      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
+      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
+
+      // Check if Shift_Start is greater than Shift_End
+      if (shiftStart.isAfter(shiftEnd)) {
+        shiftEnd.add(1, 'day');
+      }
+
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
       shift.Shift_Oper_Time = hours.toString();
     }
 
     // ตาราง Feedstock Oil Consumption
-    shift.T1_Production_EBO = worksheet['C15'] ? worksheet['C15'].v : null;
-    shift.T1_Production_CBO = worksheet['D15'] ? worksheet['D15'].v : null;
-    shift.T1_Production_FCC = worksheet['E15'] ? worksheet['E15'].v : null;
-    shift.T1_Production_Prod_Total = worksheet['F15']
-      ? worksheet['F15'].v
-      : null;
+    shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C15');
+    shift.T1_Production_CBO = this.excelSheetValue(worksheet, 'D15');
+    shift.T1_Production_FCC = this.excelSheetValue(worksheet, 'E15');
+    shift.T1_Production_Prod_Total = this.excelSheetValue(worksheet, 'F15');
 
-    shift.T1_EKINEN_EBO = worksheet['G15'] ? worksheet['G15'].v : null;
-    shift.T1_EKINEN_CBO = worksheet['H15'] ? worksheet['H15'].v : null;
-    shift.T1_EKINEN_FCC = worksheet['I15'] ? worksheet['I15'].v : null;
-    shift.T1_EKINEN_EKN_Total = worksheet['J15'] ? worksheet['J15'].v : null;
+    shift.T1_EKINEN_EBO = this.excelSheetValue(worksheet, 'G15');
+    shift.T1_EKINEN_CBO = this.excelSheetValue(worksheet, 'H15');
+    shift.T1_EKINEN_FCC = this.excelSheetValue(worksheet, 'I15');
+    shift.T1_EKINEN_EKN_Total = this.excelSheetValue(worksheet, 'J15');
 
-    shift.T1_EKINEN_FS_Oil_All_CBO =
+    shift.T1_PRODUCTION_EKINEN_CBO =
       shift.T1_Production_CBO + shift.T1_EKINEN_CBO;
-    shift.T1_EKINEN_FS_Oil_All_EBO =
+    shift.T1_PRODUCTION_EKINEN_EBO =
       shift.T1_Production_EBO + shift.T1_EKINEN_EBO;
-    shift.T1_EKINEN_FS_Oil_All_FCC =
+    shift.T1_PRODUCTION_EKINEN_FCC =
       shift.T1_Production_FCC + shift.T1_EKINEN_FCC;
-    shift.T1_EKINEN_FS_Oil_All_Total =
+    shift.T1_PRODUCTION_EKINEN_Total =
       shift.T1_Production_Prod_Total + shift.T1_EKINEN_EKN_Total;
 
-    //ตาราง FUEL
+    // ตาราง FUEL
+    shift.T2_NG_Production = this.excelSheetValue(worksheet, 'M15');
+    shift.T2_NG_Warm_up = this.excelSheetValue(worksheet, 'N15');
+    shift.T2_NG_Preheat = this.excelSheetValue(worksheet, 'O15');
+    shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S15');
+    shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T15');
+    shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U15');
+    shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q15');
 
-    shift.T2_NG_Production = worksheet['M15'] ? worksheet['M15'].v : null;
-    shift.T2_NG_Warm_up = worksheet['N15'] ? worksheet['N15'].v : null;
-    shift.T2_NG_Preheat = worksheet['O15'] ? worksheet['O15'].v : null;
-    shift.T2_EBO_Preheat = worksheet['S15'] ? worksheet['S15'].v : null;
-    shift.T2_CBO_Preheat = worksheet['T15'] ? worksheet['T15'].v : null;
-    shift.T2_FCC_Preheat = worksheet['U15'] ? worksheet['U15'].v : null;
-    shift.T2_NG_Oil_Spray_checking = worksheet['Q15']
-      ? worksheet['Q15'].v
-      : null;
+    shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V15');
+    shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X15');
+    shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z15');
+    shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD15');
 
-    shift.T3_Mixing_Other = worksheet['V15'] ? worksheet['V15'].v : null;
-    shift.T3_Hoist_Other = worksheet['X15'] ? worksheet['X15'].v : null;
-    shift.T3_Kande_Other = worksheet['Z15'] ? worksheet['Z15'].v : null;
-    shift.T3_Discharged_Volume_Other = worksheet['AD15']
-      ? worksheet['AD15'].v
-      : null;
+    shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF15');
+    shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH15');
 
-    shift.T3_KOH_Mixing_Other = worksheet['AF15'] ? worksheet['AF15'].v : null;
-    shift.T3_NaOH_Consumption_Other = worksheet['AH15']
-      ? worksheet['AH15'].v
-      : null;
+    const storageTank = new ProductionDailyVolumnStorageTank();
+
+    storageTank.Shift = '3';
+    storageTank.Tank = this.excelSheetValue(worksheet, 'AB40');
+    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'AC40');
+    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'AD40');
+    storageTank.Reason = this.excelSheetValue(worksheet, 'AE40');
+    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'AF40');
+    if (storageTank.Full_Tank) {
+      storageTank.Full_Tank = 'Y';
+    }
+    if (storageTank.Tank_Start_Time) {
+      storageTank.Tank_Start_Time = moment(
+        storageTank.Tank_Start_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+    if (storageTank.Tank_Stop_Time) {
+      storageTank.Tank_Stop_Time = moment(
+        storageTank.Tank_Stop_Time,
+        'HH:mm',
+      ).format('HH:mm');
+    }
+
+    shift.storageTanks = [storageTank];
 
     return shift;
   }
 
-  getMappingData(hdData: any, shift: ProductionDailyVolumnRecordShift) {
+  getMappingData(shift: ProductionDailyVolumnRecordShift) {
     let data = [];
     var d = {};
 
@@ -318,6 +569,8 @@ export class ProductionDailyVolumnRecordService {
      FUEL =2, 
      Summarize Carbon, KOH Mixing (Litres),NaOH Consumption (Litres) ,Recycle Hopper Level (%) = 3, 
      Storage Tank = 4
+
+     ,"Raw_Material_Name": data column  แรก ของตาราง Feedstock Oil Consumption , ตาราง FUEL, Summarize Carbon ชื่อ column ของตาราง
      */
 
     d['Raw_Material_Type_Id'] = 1;
@@ -377,58 +630,30 @@ export class ProductionDailyVolumnRecordService {
 
     d = {};
     d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'EKINEN';
-    d['Category'] = 'FS_Oil_All_EBO';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_EBO;
-    data.push(d);
-
-    d = {};
-    d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'EKINEN';
-    d['Category'] = 'FS_Oil_All_CBO';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_CBO;
-    data.push(d);
-
-    d = {};
-    d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'EKINEN';
-    d['Category'] = 'FS_Oil_All_FCC';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_FCC;
-    data.push(d);
-
-    d = {};
-    d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'EKINEN';
-    d['Category'] = 'FS_Oil_All_Total';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_Total;
-    data.push(d);
-
-    d = {};
-    d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'PRODUCTION+EKINEN';
-    d['Category'] = 'CBO';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_CBO;
-    data.push(d);
-
-    d = {};
-    d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'PRODUCTION+EKINEN';
+    d['Raw_Material_Name'] = 'PRODUCTION_EKINEN';
     d['Category'] = 'EBO';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_EBO;
+    d['Value'] = shift.T1_PRODUCTION_EKINEN_EBO;
     data.push(d);
 
     d = {};
     d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'PRODUCTION+EKINEN';
+    d['Raw_Material_Name'] = 'PRODUCTION_EKINEN';
+    d['Category'] = 'CBO';
+    d['Value'] = shift.T1_PRODUCTION_EKINEN_CBO;
+    data.push(d);
+
+    d = {};
+    d['Raw_Material_Type_Id'] = 1;
+    d['Raw_Material_Name'] = 'PRODUCTION_EKINEN';
     d['Category'] = 'FCC';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_FCC;
+    d['Value'] = shift.T1_PRODUCTION_EKINEN_FCC;
     data.push(d);
 
     d = {};
     d['Raw_Material_Type_Id'] = 1;
-    d['Raw_Material_Name'] = 'PRODUCTION+EKINEN';
+    d['Raw_Material_Name'] = 'PRODUCTION_EKINEN';
     d['Category'] = 'Total';
-    d['Value'] = shift.T1_EKINEN_FS_Oil_All_Total;
+    d['Value'] = shift.T1_PRODUCTION_EKINEN_Total;
     data.push(d);
 
     // FUEL
@@ -557,8 +782,24 @@ export class ProductionDailyVolumnRecordService {
       item['Operating_Time'] = shift.Shift_Oper_Time;
       item['Shift_Start'] = shift.Shift_Start;
       item['Shift_End'] = shift.Shift_End;
+
+      if (item['Value'] === null || item['Value'] === undefined) {
+        item['Value'] = 0;
+      }
     });
 
     return data;
+  }
+
+  excelSheetValue(worksheet: any, cell: string) {
+    let val = worksheet[cell] ? worksheet[cell].v : null;
+    if (typeof val === 'string') {
+      val = val.trim();
+    }
+    return val;
+  }
+
+  excelSheetText(worksheet: any, cell: string): string {
+    return worksheet[cell] ? worksheet[cell].w.toString().trim() : null;
   }
 }
