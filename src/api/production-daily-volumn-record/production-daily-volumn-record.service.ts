@@ -788,6 +788,13 @@ export class ProductionDailyVolumnRecordService {
 
     d = {};
     d['Raw_Material_Type_Id'] = 3;
+    d['Raw_Material_Name'] = 'Total_Mixing_Volume';
+    d['Category'] = null;
+    d['Value'] = shift.T3_Total_Mixing_Volume_Other;
+    data.push(d);
+
+    d = {};
+    d['Raw_Material_Type_Id'] = 3;
     d['Raw_Material_Name'] = 'Discharged_Volume';
     d['Category'] = null;
     d['Value'] = shift.T3_Discharged_Volume_Other;
