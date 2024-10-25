@@ -370,6 +370,10 @@ export class ProductionDailyVolumnRecordService {
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V13');
     shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X13');
     shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z13');
+    shift.T3_Total_Mixing_Volume_Other = this.excelSheetValue(
+      worksheet,
+      'AB13',
+    );
     shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD13');
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF13');
@@ -467,6 +471,10 @@ export class ProductionDailyVolumnRecordService {
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V14');
     shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X14');
     shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z14');
+    shift.T3_Total_Mixing_Volume_Other = this.excelSheetValue(
+      worksheet,
+      'AB14',
+    );
     shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD14');
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF14');
@@ -562,6 +570,10 @@ export class ProductionDailyVolumnRecordService {
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V15');
     shift.T3_Hoist_Other = this.excelSheetValue(worksheet, 'X15');
     shift.T3_Kande_Other = this.excelSheetValue(worksheet, 'Z15');
+    shift.T3_Total_Mixing_Volume_Other = this.excelSheetValue(
+      worksheet,
+      'AB15',
+    );
     shift.T3_Discharged_Volume_Other = this.excelSheetValue(worksheet, 'AD15');
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF15');
