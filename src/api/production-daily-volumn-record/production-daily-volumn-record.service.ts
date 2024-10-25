@@ -212,9 +212,13 @@ export class ProductionDailyVolumnRecordService {
     try {
       const workbook = XLSX.read(buffer, { type: 'buffer' });
 
-      // Assuming you want to read the first sheet
-      const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets['PD_DAILY_VOLUME'];
+
+      dto.date = this.excelSheetDate(worksheet, 'C4');
+      dto.line = this.excelSheetValue(worksheet, 'C6');
+      dto.grade = this.excelSheetValue(worksheet, 'G4');
+      dto.productName = this.excelSheetValue(worksheet, 'C6');
+      console.log(dto);
 
       const shift1 = this.getShift1(worksheet);
       const shift2 = this.getShift2(worksheet);
@@ -820,5 +824,13 @@ export class ProductionDailyVolumnRecordService {
 
   excelSheetText(worksheet: any, cell: string): string {
     return worksheet[cell] ? worksheet[cell].w.toString().trim() : null;
+  }
+
+  excelSheetDate(worksheet: any, cell: string): string {
+    if (worksheet[cell]) {
+      const dateValue = worksheet[cell].w.toString().trim();
+      return moment(dateValue).format('YYYY-MM-DD');
+    }
+    return null;
   }
 }
