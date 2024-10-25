@@ -49,6 +49,7 @@ dotenv.config(); // Load environment variables from .env file
     TankShippingModule,
     FailedManagementModule,
     ProductionDailyVolumnRecordModule,
+    CoSystemParametersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
