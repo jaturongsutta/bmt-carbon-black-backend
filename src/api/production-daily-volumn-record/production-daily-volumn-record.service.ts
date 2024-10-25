@@ -47,15 +47,33 @@ export class ProductionDailyVolumnRecordService {
         dto.productName = data.Product_Name;
         dto.filename = data.File_Name;
 
+        let storageTank1 = [];
+        let storageTank2 = [];
+        let storageTank3 = [];
+        if (result.recordsets[2].length > 0) {
+          storageTank1 = result.recordsets[2].filter(
+            (item) => item.Shift === 1,
+          );
+
+          storageTank2 = result.recordsets[2].filter(
+            (item) => item.Shift === 2,
+          );
+
+          storageTank3 = result.recordsets[2].filter(
+            (item) => item.Shift === 3,
+          );
+
+          console.log('storageTank3 ', storageTank3);
+        }
         const shifts = result.recordsets[1];
 
-        const shift1 = this.setShift(shifts[0]);
-        const shift2 = this.setShift(shifts[1]);
-        const shift3 = this.setShift(shifts[2]);
+        const shift1 = this.setShift(shifts[0], storageTank1);
+        const shift2 = this.setShift(shifts[1], storageTank2);
+        const shift3 = this.setShift(shifts[2], storageTank3);
 
         dto.shifts = [shift1, shift2, shift3];
 
-        console.log(result.recordsets[2]);
+        // console.log(result.recordsets);
       } else {
         dto.result.status = 1;
         dto.result.message = Return_Name;
@@ -205,7 +223,7 @@ export class ProductionDailyVolumnRecordService {
     return dto;
   }
 
-  setShift(data: any): ProductionDailyVolumnRecordShift {
+  setShift(data: any, storageTank: any): ProductionDailyVolumnRecordShift {
     const shift = new ProductionDailyVolumnRecordShift();
 
     shift.Shift = data.Shift ?? null;
@@ -269,6 +287,8 @@ export class ProductionDailyVolumnRecordService {
     // shift.T4_S2_Tank_Stop_Time_No_3 = data.T4_S2_Tank_Stop_Time_No_3 ?? null;
     // shift.T4_S2_Tank_Stop_Time_No_6 = data.T4_S2_Tank_Stop_Time_No_6 ?? null;
 
+    // storage tank
+    shift.storageTanks = storageTank;
     return shift;
   }
 
