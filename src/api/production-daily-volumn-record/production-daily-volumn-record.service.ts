@@ -21,7 +21,24 @@ export class ProductionDailyVolumnRecordService {
     req.input('Grade', dto.grade);
     req.input('ProductName', dto.productName);
 
-    return await this.commonService.getSearch('sp_search_prod_daily', req);
+    // return await this.commonService.getSearch('sp_search_prod_daily', req);
+
+    const result = await this.commonService.executeStoreProcedure(
+      'sp_search_prod_daily',
+      req,
+    );
+
+    if (result.recordsets.length > 0) {
+      return {
+        data: result.recordsets[0],
+        total_record: result.recordsets[0].length,
+      };
+    } else {
+      return {
+        data: [],
+        total_record: 0,
+      };
+    }
   }
 
   async getById(id: number): Promise<ProductionDailyVolumnRecordDto> {
