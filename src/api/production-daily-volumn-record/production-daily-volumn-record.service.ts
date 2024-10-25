@@ -718,7 +718,7 @@ export class ProductionDailyVolumnRecordService {
     d = {};
     d['Raw_Material_Type_Id'] = 2;
     d['Raw_Material_Name'] = 'NG';
-    d['Category'] = 'Warm up_Total';
+    d['Category'] = 'Warm_up_Total';
     d['Value'] = shift.T2_NG_Warm_up_Total;
     data.push(d);
 
@@ -760,7 +760,7 @@ export class ProductionDailyVolumnRecordService {
     d = {};
     d['Raw_Material_Type_Id'] = 2;
     d['Raw_Material_Name'] = 'NG';
-    d['Category'] = 'Oil Spray checking_Total';
+    d['Category'] = 'Oil_Spray_checking_Total';
     d['Value'] = shift.T2_NG_Oil_Spray_checking_Total;
     data.push(d);
 
