@@ -79,8 +79,6 @@ export class ProductionDailyVolumnRecordService {
           storageTank3 = result.recordsets[2].filter(
             (item) => item.Shift === 3,
           );
-
-          console.log('storageTank3 ', storageTank3);
         }
         const shifts = result.recordsets[1];
 
@@ -89,8 +87,6 @@ export class ProductionDailyVolumnRecordService {
         const shift3 = this.setShift(shifts[2], storageTank3);
 
         dto.shifts = [shift1, shift2, shift3];
-
-        // console.log(result.recordsets);
       } else {
         dto.result.status = 1;
         dto.result.message = Return_Name;
@@ -125,8 +121,6 @@ export class ProductionDailyVolumnRecordService {
       storageTanks.map((item) => {
         item.Full_Tank = item.Full_Tank !== 'Y' ? 'N' : 'Y';
       });
-
-      console.log(storageTanks);
 
       const listFileUpload = JSON.stringify(itemData);
       const listStorageTankUpload = JSON.stringify(storageTanks);
@@ -183,8 +177,6 @@ export class ProductionDailyVolumnRecordService {
       const listFileUpload = JSON.stringify(itemData);
       const listStorageTankUpload = JSON.stringify(storageTanks);
 
-      console.log(listFileUpload);
-
       let req = await this.commonService.getConnection();
       req.input('Prod_Daily_Id', id);
       req.input('FileName', data.filename);
@@ -225,12 +217,8 @@ export class ProductionDailyVolumnRecordService {
       const worksheet = workbook.Sheets['PD_DAILY_VOLUME'];
 
       const shift1 = this.getShift1(worksheet);
-      console.log('shift1ed');
       const shift2 = this.getShift2(worksheet);
-      console.log('shift2ed');
-
       const shift3 = this.getShift3(worksheet);
-      console.log('shift3ed');
 
       dto.shifts = [shift1, shift2, shift3];
     } catch (error) {
@@ -242,6 +230,7 @@ export class ProductionDailyVolumnRecordService {
 
   setShift(data: any, storageTank: any): ProductionDailyVolumnRecordShift {
     const shift = new ProductionDailyVolumnRecordShift();
+    console.log(data);
 
     shift.Shift = data.Shift ?? null;
     shift.Shift_Oper_Time = data.Shift_Oper_Time ?? null;
@@ -249,28 +238,23 @@ export class ProductionDailyVolumnRecordService {
     shift.Shift_End = data.Shift_End ?? null;
     shift.T1_EKINEN_CBO = data.T1_EKINEN_CBO ?? 0;
     shift.T1_EKINEN_EBO = data.T1_EKINEN_EBO ?? 0;
-    shift.T1_EKINEN_FCC = data.T1_EKINEN_FCC ?? 0;
     shift.T1_EKINEN_EKN_Total = data.T1_EKINEN_EKN_Total ?? 0;
-
+    shift.T1_EKINEN_FCC = data.T1_EKINEN_FCC ?? 0;
+    shift.T1_Production_CBO = data.T1_Production_CBO ?? 0;
+    shift.T1_Production_EBO = data.T1_Production_EBO ?? 0;
     shift.T1_PRODUCTION_EKINEN_CBO = data.T1_PRODUCTION_EKINEN_CBO ?? 0;
     shift.T1_PRODUCTION_EKINEN_EBO = data.T1_PRODUCTION_EKINEN_EBO ?? 0;
     shift.T1_PRODUCTION_EKINEN_FCC = data.T1_PRODUCTION_EKINEN_FCC ?? 0;
     shift.T1_PRODUCTION_EKINEN_Total = data.T1_PRODUCTION_EKINEN_Total ?? 0;
-    shift.T1_Production_CBO = data.T1_Production_CBO ?? 0;
-    shift.T1_Production_EBO = data.T1_Production_EBO ?? 0;
     shift.T1_Production_FCC = data.T1_Production_FCC ?? 0;
     shift.T1_Production_Prod_Total = data.T1_Production_Prod_Total ?? 0;
-    shift.T1_PRODUCTION_EKINEN_CBO = data['T1_PRODUCTION+EKINEN_CBO'] ?? 0;
-    shift.T1_PRODUCTION_EKINEN_EBO = data['T1_PRODUCTION+EKINEN_EBO'] ?? 0;
-    shift.T1_PRODUCTION_EKINEN_FCC = data['T1_PRODUCTION+EKINEN_FCC'] ?? 0;
-    shift.T1_PRODUCTION_EKINEN_Total = data['T1_PRODUCTION+EKINEN_Total'] ?? 0;
     shift.T2_NG_Drying = data.T2_NG_Drying ?? 0;
     shift.T2_NG_Drying_Total = data.T2_NG_Drying_Total ?? 0;
     shift.T2_NG_Oil_Spray_checking = data.T2_NG_Oil_Spray_checking ?? 0;
     shift.T2_NG_Oil_Spray_checking_Total =
       data.T2_NG_Oil_Spray_checking_Total ?? 0;
     shift.T2_NG_Preheat = data.T2_NG_Preheat ?? 0;
-    // shift.T2_NG_Preheat_Total = data.T2_NG_Preheat_Total ?? 0;
+    shift.T2_Preheat_Total = data.T2_Preheat_Total ?? 0;
     shift.T2_NG_Production = data.T2_NG_Production ?? 0;
     shift.T2_NG_Production_Total = data.T2_NG_Production_Total ?? 0;
     shift.T2_NG_Warm_up = data.T2_NG_Warm_up ?? 0;
@@ -283,26 +267,7 @@ export class ProductionDailyVolumnRecordService {
     shift.T3_NaOH_Consumption_Other = data.T3_NaOH_Consumption_Other ?? 0;
     shift.T3_Recycle_Hopper_Level_Other =
       data.T3_Recycle_Hopper_Level_Other ?? 0;
-    // shift.T4_S1_Tank_Full_Tank_No_1 = data.T4_S1_Tank_Full_Tank_No_1 ?? null;
-    // shift.T4_S1_Tank_Full_Tank_No_2 = data.T4_S1_Tank_Full_Tank_No_2 ?? null;
-    // shift.T4_S1_Tank_No_1 = data.T4_S1_Tank_No_1 ?? null;
-    // shift.T4_S1_Tank_No_2 = data.T4_S1_Tank_No_2 ?? null;
-    // shift.T4_S1_Tank_Reason_No_1 = data.T4_S1_Tank_Reason_No_1 ?? null;
-    // shift.T4_S1_Tank_Reason_No_2 = data.T4_S1_Tank_Reason_No_2 ?? null;
-    // shift.T4_S1_Tank_Start_Time_No_1 = data.T4_S1_Tank_Start_Time_No_1 ?? null;
-    // shift.T4_S1_Tank_Start_Time_No_2 = data.T4_S1_Tank_Start_Time_No_2 ?? null;
-    // shift.T4_S1_Tank_Stop_Time_No_1 = data.T4_S1_Tank_Stop_Time_No_1 ?? null;
-    // shift.T4_S1_Tank_Stop_Time_No_2 = data.T4_S1_Tank_Stop_Time_No_2 ?? null;
-    // shift.T4_S2_Tank_Full_Tank_No_3 = data.T4_S2_Tank_Full_Tank_No_3 ?? null;
-    // shift.T4_S2_Tank_Full_Tank_No_6 = data.T4_S2_Tank_Full_Tank_No_6 ?? null;
-    // shift.T4_S2_Tank_No_3 = data.T4_S2_Tank_No_3 ?? null;
-    // shift.T4_S2_Tank_No_6 = data.T4_S2_Tank_No_6 ?? null;
-    // shift.T4_S2_Tank_Reason_No_3 = data.T4_S2_Tank_Reason_No_3 ?? null;
-    // shift.T4_S2_Tank_Reason_No_6 = data.T4_S2_Tank_Reason_No_6 ?? null;
-    // shift.T4_S2_Tank_Start_Time_No_3 = data.T4_S2_Tank_Start_Time_No_3 ?? null;
-    // shift.T4_S2_Tank_Start_Time_No_6 = data.T4_S2_Tank_Start_Time_No_6 ?? null;
-    // shift.T4_S2_Tank_Stop_Time_No_3 = data.T4_S2_Tank_Stop_Time_No_3 ?? null;
-    // shift.T4_S2_Tank_Stop_Time_No_6 = data.T4_S2_Tank_Stop_Time_No_6 ?? null;
+    shift.T3_Total_Mixing_Volume_Other = data.T3_Total_Mixing_Volume_Other ?? 0;
 
     // storage tank
     shift.storageTanks = storageTank;
@@ -402,8 +367,6 @@ export class ProductionDailyVolumnRecordService {
         'HH:mm',
       ).format('HH:mm');
     }
-
-    console.log(storageTank);
 
     shift.storageTanks = [storageTank];
 
