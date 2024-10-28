@@ -36,6 +36,7 @@ export class TankShippingController extends BaseController {
       dto.lineTank,
       dto.grade,
       dto.productName,
+      dto.empty,
       dto.totalQty,
     );
   }

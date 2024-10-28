@@ -70,6 +70,7 @@ export class TankShippingService {
     lineTank,
     grade,
     productName,
+    empty,
     totalQty: number,
   ): Promise<BaseResponse> {
     try {
@@ -80,6 +81,7 @@ export class TankShippingService {
       req.input('Grade', grade);
       req.input('Product_Name', productName);
       req.input('Total_Qty', totalQty);
+      req.input('Empty', empty === 'Y' ? 'Y' : 'N');
       req.output('Return_CD', '');
       req.output('Return_Name', '');
 
