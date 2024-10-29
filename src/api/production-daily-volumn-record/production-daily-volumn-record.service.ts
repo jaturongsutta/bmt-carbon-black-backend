@@ -408,7 +408,7 @@ export class ProductionDailyVolumnRecordService {
 
       if (tank !== null && tank !== '') {
         let storageTank = new ProductionDailyVolumnStorageTank();
-        storageTank.Shift = '1';
+        storageTank.Shift = shift;
         storageTank.Tank = tank;
         storageTank.Tank_Start_Time = this.excelSheetText(
           worksheet,
