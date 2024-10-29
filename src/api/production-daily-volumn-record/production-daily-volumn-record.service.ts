@@ -334,6 +334,7 @@ export class ProductionDailyVolumnRecordService {
     shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S13');
     shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T13');
     shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U13');
+    shift.T2_NG_Drying = this.excelSheetValue(worksheet, 'P13');
     shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q13');
 
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V13');
@@ -347,6 +348,10 @@ export class ProductionDailyVolumnRecordService {
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF13');
     shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH13');
+    shift.T3_Recycle_Hopper_Level_Other = this.excelSheetValue(
+      worksheet,
+      'AJ13',
+    );
 
     const storageTank = new ProductionDailyVolumnStorageTank();
 
@@ -433,6 +438,7 @@ export class ProductionDailyVolumnRecordService {
     shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S14');
     shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T14');
     shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U14');
+    shift.T2_NG_Drying = this.excelSheetValue(worksheet, 'P14');
     shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q14');
 
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V14');
@@ -446,6 +452,10 @@ export class ProductionDailyVolumnRecordService {
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF14');
     shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH14');
+    shift.T3_Recycle_Hopper_Level_Other = this.excelSheetValue(
+      worksheet,
+      'AJ14',
+    );
 
     const storageTank = new ProductionDailyVolumnStorageTank();
 
@@ -532,6 +542,7 @@ export class ProductionDailyVolumnRecordService {
     shift.T2_EBO_Preheat = this.excelSheetValue(worksheet, 'S15');
     shift.T2_CBO_Preheat = this.excelSheetValue(worksheet, 'T15');
     shift.T2_FCC_Preheat = this.excelSheetValue(worksheet, 'U15');
+    shift.T2_NG_Drying = this.excelSheetValue(worksheet, 'P15');
     shift.T2_NG_Oil_Spray_checking = this.excelSheetValue(worksheet, 'Q15');
 
     shift.T3_Mixing_Other = this.excelSheetValue(worksheet, 'V15');
@@ -545,6 +556,10 @@ export class ProductionDailyVolumnRecordService {
 
     shift.T3_KOH_Mixing_Other = this.excelSheetValue(worksheet, 'AF15');
     shift.T3_NaOH_Consumption_Other = this.excelSheetValue(worksheet, 'AH15');
+    shift.T3_Recycle_Hopper_Level_Other = this.excelSheetValue(
+      worksheet,
+      'AJ15',
+    );
 
     const storageTank = new ProductionDailyVolumnStorageTank();
 
