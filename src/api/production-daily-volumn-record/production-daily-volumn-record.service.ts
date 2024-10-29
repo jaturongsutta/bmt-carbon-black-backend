@@ -218,7 +218,6 @@ export class ProductionDailyVolumnRecordService {
       dto.line = this.excelSheetValue(worksheet, 'C6');
       dto.grade = this.excelSheetValue(worksheet, 'G4');
       dto.productName = this.excelSheetValue(worksheet, 'C6');
-      console.log(dto);
 
       const shift1 = this.getShift1(worksheet);
       const shift2 = this.getShift2(worksheet);
@@ -234,7 +233,6 @@ export class ProductionDailyVolumnRecordService {
 
   setShift(data: any, storageTank: any): ProductionDailyVolumnRecordShift {
     const shift = new ProductionDailyVolumnRecordShift();
-    console.log(data);
 
     shift.Shift = data.Shift ?? null;
     shift.Shift_Oper_Time = data.Shift_Oper_Time ?? null;
@@ -353,33 +351,102 @@ export class ProductionDailyVolumnRecordService {
       'AJ13',
     );
 
-    const storageTank = new ProductionDailyVolumnStorageTank();
+    // const storageTank = new ProductionDailyVolumnStorageTank();
 
-    storageTank.Shift = '1';
-    storageTank.Tank = this.excelSheetValue(worksheet, 'C40');
-    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'D40');
-    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'E40');
-    storageTank.Reason = this.excelSheetValue(worksheet, 'F40');
-    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'J40');
-    if (storageTank.Full_Tank) {
-      storageTank.Full_Tank = 'Y';
-    }
-    if (storageTank.Tank_Start_Time) {
-      storageTank.Tank_Start_Time = moment(
-        storageTank.Tank_Start_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
-    if (storageTank.Tank_Stop_Time) {
-      storageTank.Tank_Stop_Time = moment(
-        storageTank.Tank_Stop_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
+    // storageTank.Shift = '1';
+    // storageTank.Tank = this.excelSheetValue(worksheet, 'C40');
+    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'D40');
+    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'E40');
+    // storageTank.Reason = this.excelSheetValue(worksheet, 'F40');
+    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'J40');
+    // if (storageTank.Full_Tank) {
+    //   storageTank.Full_Tank = 'Y';
+    // }
+    // if (storageTank.Tank_Start_Time) {
+    //   storageTank.Tank_Start_Time = moment(
+    //     storageTank.Tank_Start_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
+    // if (storageTank.Tank_Stop_Time) {
+    //   storageTank.Tank_Stop_Time = moment(
+    //     storageTank.Tank_Stop_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
 
-    shift.storageTanks = [storageTank];
+    // shift.storageTanks = [storageTank];
+
+    shift.storageTanks = this.getstorageTank(
+      worksheet,
+      '1',
+      40,
+      'C',
+      'D',
+      'E',
+      'F',
+      'J',
+    );
 
     return shift;
+  }
+
+  getstorageTank(
+    worksheet: any,
+    shift: string,
+    indexRecord,
+    colTank,
+    colStartTime,
+    colStopTime,
+    colReason,
+    colFullTank,
+  ): ProductionDailyVolumnStorageTank[] {
+    var storageTanks = [];
+    let tank = '';
+    do {
+      tank = this.excelSheetValue(worksheet, colTank + indexRecord);
+
+      if (tank !== null && tank !== '') {
+        let storageTank = new ProductionDailyVolumnStorageTank();
+        storageTank.Shift = '1';
+        storageTank.Tank = tank;
+        storageTank.Tank_Start_Time = this.excelSheetText(
+          worksheet,
+          colStartTime + indexRecord,
+        );
+        storageTank.Tank_Stop_Time = this.excelSheetText(
+          worksheet,
+          colStopTime + indexRecord,
+        );
+        storageTank.Reason = this.excelSheetValue(
+          worksheet,
+          colReason + indexRecord,
+        );
+        storageTank.Full_Tank = this.excelSheetValue(
+          worksheet,
+          colFullTank + indexRecord,
+        );
+        if (storageTank.Full_Tank) {
+          storageTank.Full_Tank = 'Y';
+        }
+        if (storageTank.Tank_Start_Time) {
+          storageTank.Tank_Start_Time = moment(
+            storageTank.Tank_Start_Time,
+            'HH:mm',
+          ).format('HH:mm');
+        }
+        if (storageTank.Tank_Stop_Time) {
+          storageTank.Tank_Stop_Time = moment(
+            storageTank.Tank_Stop_Time,
+            'HH:mm',
+          ).format('HH:mm');
+        }
+        storageTanks.push(storageTank);
+        indexRecord++;
+      }
+    } while (tank !== '');
+
+    return storageTanks;
   }
 
   getShift2(worksheet: any) {
@@ -457,31 +524,42 @@ export class ProductionDailyVolumnRecordService {
       'AJ14',
     );
 
-    const storageTank = new ProductionDailyVolumnStorageTank();
+    // const storageTank = new ProductionDailyVolumnStorageTank();
 
-    storageTank.Shift = '2';
-    storageTank.Tank = this.excelSheetValue(worksheet, 'N40');
-    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'O40');
-    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'P40');
-    storageTank.Reason = this.excelSheetValue(worksheet, 'Q40');
-    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'X40');
-    if (storageTank.Full_Tank) {
-      storageTank.Full_Tank = 'Y';
-    }
-    if (storageTank.Tank_Start_Time) {
-      storageTank.Tank_Start_Time = moment(
-        storageTank.Tank_Start_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
-    if (storageTank.Tank_Stop_Time) {
-      storageTank.Tank_Stop_Time = moment(
-        storageTank.Tank_Stop_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
+    // storageTank.Shift = '2';
+    // storageTank.Tank = this.excelSheetValue(worksheet, 'N40');
+    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'O40');
+    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'P40');
+    // storageTank.Reason = this.excelSheetValue(worksheet, 'Q40');
+    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'X40');
+    // if (storageTank.Full_Tank) {
+    //   storageTank.Full_Tank = 'Y';
+    // }
+    // if (storageTank.Tank_Start_Time) {
+    //   storageTank.Tank_Start_Time = moment(
+    //     storageTank.Tank_Start_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
+    // if (storageTank.Tank_Stop_Time) {
+    //   storageTank.Tank_Stop_Time = moment(
+    //     storageTank.Tank_Stop_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
 
-    shift.storageTanks = [storageTank];
+    // shift.storageTanks = [storageTank];
+
+    shift.storageTanks = this.getstorageTank(
+      worksheet,
+      '2',
+      40,
+      'N',
+      'O',
+      'P',
+      'Q',
+      'X',
+    );
 
     return shift;
   }
@@ -561,31 +639,42 @@ export class ProductionDailyVolumnRecordService {
       'AJ15',
     );
 
-    const storageTank = new ProductionDailyVolumnStorageTank();
+    // const storageTank = new ProductionDailyVolumnStorageTank();
 
-    storageTank.Shift = '3';
-    storageTank.Tank = this.excelSheetValue(worksheet, 'AB40');
-    storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'AC40');
-    storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'AD40');
-    storageTank.Reason = this.excelSheetValue(worksheet, 'AE40');
-    storageTank.Full_Tank = this.excelSheetValue(worksheet, 'AF40');
-    if (storageTank.Full_Tank) {
-      storageTank.Full_Tank = 'Y';
-    }
-    if (storageTank.Tank_Start_Time) {
-      storageTank.Tank_Start_Time = moment(
-        storageTank.Tank_Start_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
-    if (storageTank.Tank_Stop_Time) {
-      storageTank.Tank_Stop_Time = moment(
-        storageTank.Tank_Stop_Time,
-        'HH:mm',
-      ).format('HH:mm');
-    }
+    // storageTank.Shift = '3';
+    // storageTank.Tank = this.excelSheetValue(worksheet, 'AB40');
+    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'AC40');
+    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'AD40');
+    // storageTank.Reason = this.excelSheetValue(worksheet, 'AE40');
+    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'AF40');
+    // if (storageTank.Full_Tank) {
+    //   storageTank.Full_Tank = 'Y';
+    // }
+    // if (storageTank.Tank_Start_Time) {
+    //   storageTank.Tank_Start_Time = moment(
+    //     storageTank.Tank_Start_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
+    // if (storageTank.Tank_Stop_Time) {
+    //   storageTank.Tank_Stop_Time = moment(
+    //     storageTank.Tank_Stop_Time,
+    //     'HH:mm',
+    //   ).format('HH:mm');
+    // }
 
-    shift.storageTanks = [storageTank];
+    // shift.storageTanks = [storageTank];
+
+    shift.storageTanks = this.getstorageTank(
+      worksheet,
+      '3',
+      40,
+      'AB',
+      'AC',
+      'AD',
+      'AE',
+      'AI',
+    );
 
     return shift;
   }
