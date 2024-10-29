@@ -233,7 +233,6 @@ export class ProductionDailyVolumnRecordService {
 
   setShift(data: any, storageTank: any): ProductionDailyVolumnRecordShift {
     const shift = new ProductionDailyVolumnRecordShift();
-
     shift.Shift = data.Shift ?? null;
     shift.Shift_Oper_Time = data.Shift_Oper_Time ?? null;
     shift.Shift_Start = data.Shift_Start ?? null;
@@ -256,11 +255,17 @@ export class ProductionDailyVolumnRecordService {
     shift.T2_NG_Oil_Spray_checking_Total =
       data.T2_NG_Oil_Spray_checking_Total ?? 0;
     shift.T2_NG_Preheat = data.T2_NG_Preheat ?? 0;
+
+    shift.T2_EBO_Preheat = data.T2_EBO_Preheat ?? 0;
+    shift.T2_CBO_Preheat = data.T2_CBO_Preheat ?? 0;
+    shift.T2_FCC_Preheat = data.T2_FCC_Preheat ?? 0;
+
     shift.T2_Preheat_Total = data.T2_Preheat_Total ?? 0;
     shift.T2_NG_Production = data.T2_NG_Production ?? 0;
     shift.T2_NG_Production_Total = data.T2_NG_Production_Total ?? 0;
     shift.T2_NG_Warm_up = data.T2_NG_Warm_up ?? 0;
     shift.T2_NG_Warm_up_Total = data.T2_NG_Warm_up_Total ?? 0;
+
     shift.T3_Discharged_Volume_Other = data.T3_Discharged_Volume_Other ?? 0;
     shift.T3_Hoist_Other = data.T3_Hoist_Other ?? 0;
     shift.T3_Kande_Other = data.T3_Kande_Other ?? 0;
@@ -810,6 +815,27 @@ export class ProductionDailyVolumnRecordService {
     d['Raw_Material_Name'] = 'NG';
     d['Category'] = 'Preheat';
     d['Value'] = shift.T2_NG_Preheat;
+    data.push(d);
+
+    d = {};
+    d['Raw_Material_Type_Id'] = 2;
+    d['Raw_Material_Name'] = 'EBO';
+    d['Category'] = 'Preheat';
+    d['Value'] = shift.T2_EBO_Preheat;
+    data.push(d);
+
+    d = {};
+    d['Raw_Material_Type_Id'] = 2;
+    d['Raw_Material_Name'] = 'CBO';
+    d['Category'] = 'Preheat';
+    d['Value'] = shift.T2_CBO_Preheat;
+    data.push(d);
+
+    d = {};
+    d['Raw_Material_Type_Id'] = 2;
+    d['Raw_Material_Name'] = 'FCC';
+    d['Category'] = 'Preheat';
+    d['Value'] = shift.T2_FCC_Preheat;
     data.push(d);
 
     d = {};
