@@ -285,25 +285,13 @@ export class ProductionDailyVolumnRecordService {
     const shift = new ProductionDailyVolumnRecordShift();
 
     shift.Shift = this.excelSheetValue(worksheet, 'B13');
-    shift.Shift_Start = this.excelSheetText(worksheet, 'H23');
-    shift.Shift_End = this.excelSheetText(worksheet, 'I23');
-
-    if (shift.Shift_Start) {
-      shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
-    }
-    if (shift.Shift_End) {
-      shift.Shift_End = moment(shift.Shift_End, 'HH:mm').format('HH:mm');
-    }
+    shift.Shift_Start = this.excelSheetTime(worksheet, 'H23');
+    shift.Shift_End = this.excelSheetTime(worksheet, 'I23');
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
       let shiftStart = moment(shift.Shift_Start, 'HH:mm');
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      // Check if Shift_Start is greater than Shift_End
-      if (shiftStart.isAfter(shiftEnd)) {
-        shiftEnd.add(1, 'day');
-      }
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
@@ -356,32 +344,6 @@ export class ProductionDailyVolumnRecordService {
       'AJ13',
     );
 
-    // const storageTank = new ProductionDailyVolumnStorageTank();
-
-    // storageTank.Shift = '1';
-    // storageTank.Tank = this.excelSheetValue(worksheet, 'C40');
-    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'D40');
-    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'E40');
-    // storageTank.Reason = this.excelSheetValue(worksheet, 'F40');
-    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'J40');
-    // if (storageTank.Full_Tank) {
-    //   storageTank.Full_Tank = 'Y';
-    // }
-    // if (storageTank.Tank_Start_Time) {
-    //   storageTank.Tank_Start_Time = moment(
-    //     storageTank.Tank_Start_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-    // if (storageTank.Tank_Stop_Time) {
-    //   storageTank.Tank_Stop_Time = moment(
-    //     storageTank.Tank_Stop_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-
-    // shift.storageTanks = [storageTank];
-
     shift.storageTanks = this.getstorageTank(
       worksheet,
       '1',
@@ -415,11 +377,11 @@ export class ProductionDailyVolumnRecordService {
         let storageTank = new ProductionDailyVolumnStorageTank();
         storageTank.Shift = shift;
         storageTank.Tank = tank;
-        storageTank.Tank_Start_Time = this.excelSheetText(
+        storageTank.Tank_Start_Time = this.excelSheetTime(
           worksheet,
           colStartTime + indexRecord,
         );
-        storageTank.Tank_Stop_Time = this.excelSheetText(
+        storageTank.Tank_Stop_Time = this.excelSheetTime(
           worksheet,
           colStopTime + indexRecord,
         );
@@ -434,18 +396,18 @@ export class ProductionDailyVolumnRecordService {
         if (storageTank.Full_Tank) {
           storageTank.Full_Tank = 'Y';
         }
-        if (storageTank.Tank_Start_Time) {
-          storageTank.Tank_Start_Time = moment(
-            storageTank.Tank_Start_Time,
-            'HH:mm',
-          ).format('HH:mm');
-        }
-        if (storageTank.Tank_Stop_Time) {
-          storageTank.Tank_Stop_Time = moment(
-            storageTank.Tank_Stop_Time,
-            'HH:mm',
-          ).format('HH:mm');
-        }
+        // if (storageTank.Tank_Start_Time) {
+        //   storageTank.Tank_Start_Time = moment(
+        //     storageTank.Tank_Start_Time,
+        //     'HH:mm',
+        //   ).format('HH:mm');
+        // }
+        // if (storageTank.Tank_Stop_Time) {
+        //   storageTank.Tank_Stop_Time = moment(
+        //     storageTank.Tank_Stop_Time,
+        //     'HH:mm',
+        //   ).format('HH:mm');
+        // }
         storageTanks.push(storageTank);
         indexRecord++;
       }
@@ -458,25 +420,13 @@ export class ProductionDailyVolumnRecordService {
     const shift = new ProductionDailyVolumnRecordShift();
 
     shift.Shift = this.excelSheetValue(worksheet, 'B14');
-    shift.Shift_Start = this.excelSheetText(worksheet, 'V23');
-    shift.Shift_End = this.excelSheetText(worksheet, 'W23');
-
-    if (shift.Shift_Start) {
-      shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
-    }
-    if (shift.Shift_End) {
-      shift.Shift_End = moment(shift.Shift_End, 'HH:mm').format('HH:mm');
-    }
+    shift.Shift_Start = this.excelSheetTime(worksheet, 'V23');
+    shift.Shift_End = this.excelSheetTime(worksheet, 'W23');
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
       let shiftStart = moment(shift.Shift_Start, 'HH:mm');
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      // Check if Shift_Start is greater than Shift_End
-      if (shiftStart.isAfter(shiftEnd)) {
-        shiftEnd.add(1, 'day');
-      }
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
@@ -529,32 +479,6 @@ export class ProductionDailyVolumnRecordService {
       'AJ14',
     );
 
-    // const storageTank = new ProductionDailyVolumnStorageTank();
-
-    // storageTank.Shift = '2';
-    // storageTank.Tank = this.excelSheetValue(worksheet, 'N40');
-    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'O40');
-    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'P40');
-    // storageTank.Reason = this.excelSheetValue(worksheet, 'Q40');
-    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'X40');
-    // if (storageTank.Full_Tank) {
-    //   storageTank.Full_Tank = 'Y';
-    // }
-    // if (storageTank.Tank_Start_Time) {
-    //   storageTank.Tank_Start_Time = moment(
-    //     storageTank.Tank_Start_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-    // if (storageTank.Tank_Stop_Time) {
-    //   storageTank.Tank_Stop_Time = moment(
-    //     storageTank.Tank_Stop_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-
-    // shift.storageTanks = [storageTank];
-
     shift.storageTanks = this.getstorageTank(
       worksheet,
       '2',
@@ -573,25 +497,13 @@ export class ProductionDailyVolumnRecordService {
     const shift = new ProductionDailyVolumnRecordShift();
 
     shift.Shift = this.excelSheetValue(worksheet, 'B15');
-    shift.Shift_Start = this.excelSheetText(worksheet, 'AG23');
-    shift.Shift_End = this.excelSheetText(worksheet, 'AH23');
-
-    if (shift.Shift_Start) {
-      shift.Shift_Start = moment(shift.Shift_Start, 'HH:mm').format('HH:mm');
-    }
-    if (shift.Shift_End) {
-      shift.Shift_End = moment(shift.Shift_End, 'HH:mm').format('HH:mm');
-    }
+    shift.Shift_Start = this.excelSheetTime(worksheet, 'AG23');
+    shift.Shift_End = this.excelSheetTime(worksheet, 'AH23');
 
     // Calculate the difference between Shift_Start and Shift_End
     if (shift.Shift_Start && shift.Shift_End) {
       let shiftStart = moment(shift.Shift_Start, 'HH:mm');
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      // Check if Shift_Start is greater than Shift_End
-      if (shiftStart.isAfter(shiftEnd)) {
-        shiftEnd.add(1, 'day');
-      }
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
       const hours = duration.asHours();
@@ -643,32 +555,6 @@ export class ProductionDailyVolumnRecordService {
       worksheet,
       'AJ15',
     );
-
-    // const storageTank = new ProductionDailyVolumnStorageTank();
-
-    // storageTank.Shift = '3';
-    // storageTank.Tank = this.excelSheetValue(worksheet, 'AB40');
-    // storageTank.Tank_Start_Time = this.excelSheetText(worksheet, 'AC40');
-    // storageTank.Tank_Stop_Time = this.excelSheetText(worksheet, 'AD40');
-    // storageTank.Reason = this.excelSheetValue(worksheet, 'AE40');
-    // storageTank.Full_Tank = this.excelSheetValue(worksheet, 'AF40');
-    // if (storageTank.Full_Tank) {
-    //   storageTank.Full_Tank = 'Y';
-    // }
-    // if (storageTank.Tank_Start_Time) {
-    //   storageTank.Tank_Start_Time = moment(
-    //     storageTank.Tank_Start_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-    // if (storageTank.Tank_Stop_Time) {
-    //   storageTank.Tank_Stop_Time = moment(
-    //     storageTank.Tank_Stop_Time,
-    //     'HH:mm',
-    //   ).format('HH:mm');
-    // }
-
-    // shift.storageTanks = [storageTank];
 
     shift.storageTanks = this.getstorageTank(
       worksheet,
@@ -960,6 +846,20 @@ export class ProductionDailyVolumnRecordService {
     if (worksheet[cell]) {
       const dateValue = worksheet[cell].w.toString().trim();
       return moment(dateValue).format('YYYY-MM-DD');
+    }
+    return null;
+  }
+
+  excelSheetTime(worksheet: any, cell: string): string {
+    if (worksheet[cell]) {
+      const v = worksheet[cell].w.toString().trim();
+      if (v.includes(':')) {
+        const [h, m] = v.split(':');
+        return h.padStart(2, '0') + ':' + m.padStart(2, '0');
+      } else if (v.includes('.')) {
+        const [h, m] = v.split('.');
+        return h.padStart(2, '0') + ':' + m.padStart(2, '0');
+      }
     }
     return null;
   }
