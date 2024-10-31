@@ -9,7 +9,7 @@ export class CoSystemParametersController extends BaseController {
     }
 
     @Get('findbyType/:key')
-    getPredefine(@Request() req: any, @Param('key') key: string) {
+    getCoSystemParameter(@Request() req: any, @Param('key') key: string) {
         return this.service.findbyType(key);
     }
 }

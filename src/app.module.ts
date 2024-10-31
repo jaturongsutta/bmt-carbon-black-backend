@@ -16,6 +16,7 @@ import { TankShippingModule } from './api/tank-shipping/tank-shipping.module';
 import { FailedManagementModule } from './api/failed-management/failed-management.module';
 import { ProductionDailyVolumnRecordModule } from './api/production-daily-volumn-record/production-daily-volumn-record.module';
 import { CoSystemParametersModule } from './api/co-system-parameters/co-system-parameters.module';
+import { CoConfigReportsModule } from './api/co-config-reports/co-config-reports.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -50,6 +51,7 @@ dotenv.config(); // Load environment variables from .env file
     FailedManagementModule,
     ProductionDailyVolumnRecordModule,
     CoSystemParametersModule,
+    CoConfigReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
