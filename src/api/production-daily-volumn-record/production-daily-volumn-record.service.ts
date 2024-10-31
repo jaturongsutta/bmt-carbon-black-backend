@@ -845,7 +845,7 @@ export class ProductionDailyVolumnRecordService {
   excelSheetDate(worksheet: any, cell: string): string {
     if (worksheet[cell]) {
       const dateValue = worksheet[cell].w.toString().trim();
-      return moment(dateValue).format('YYYY-MM-DD');
+      return moment(dateValue, 'D-MMM-YY').format('YYYY-MM-DD');
     }
     return null;
   }
