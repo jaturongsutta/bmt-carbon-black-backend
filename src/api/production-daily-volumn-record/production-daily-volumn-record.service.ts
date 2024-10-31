@@ -371,7 +371,7 @@ export class ProductionDailyVolumnRecordService {
     var storageTanks = [];
     let tank = '';
     do {
-      tank = this.excelSheetValue(worksheet, colTank + indexRecord);
+      tank = this.excelSheetValue(worksheet, colTank + indexRecord) || '';
 
       if (tank !== null && tank !== '') {
         let storageTank = new ProductionDailyVolumnStorageTank();
