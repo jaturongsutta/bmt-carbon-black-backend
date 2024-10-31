@@ -59,11 +59,15 @@ export class FailedManagementService {
   }
 
   async getProductWeight(
+    month: number,
+    year: number,
     line: number,
     productName: string,
   ): Promise<BaseResponse> {
     try {
       let req = await this.commonService.getConnection();
+      req.input('Month', month);
+      req.input('Year', year);
       req.input('Line', line);
       req.input('Product_Name', productName);
       req.output('Return_CD', '');

@@ -24,12 +24,14 @@ export class FailedManagementController extends BaseController {
     return await this.service.search(dto);
   }
 
-  @Get('get-product-weight/:line/:productName')
+  @Get('get-product-weight/:month/:year/:line/:productName')
   async getProductWeight(
+    @Param('month') month: number,
+    @Param('year') year: number,
     @Param('line') line: number,
     @Param('productName') productName: string,
   ) {
-    return await this.service.getProductWeight(line, productName);
+    return await this.service.getProductWeight(month, year, line, productName);
   }
 
   @Get('get-by-id/:id')
