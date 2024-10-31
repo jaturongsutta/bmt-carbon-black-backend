@@ -217,8 +217,7 @@ export class ProductionDailyVolumnRecordService {
       dto.date = this.excelSheetDate(worksheet, 'C4');
       dto.line = this.excelSheetValue(worksheet, 'C6');
       dto.grade = this.excelSheetValue(worksheet, 'G4');
-      dto.productName = this.excelSheetValue(worksheet, 'C6') || '';
-      dto.productName = dto.productName ? dto.productName.trim() : '';
+      dto.productName = this.excelSheetValue(worksheet, 'G6');
 
       const shift1 = this.getShift1(worksheet);
       const shift2 = this.getShift2(worksheet);
