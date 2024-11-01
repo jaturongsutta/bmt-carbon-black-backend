@@ -294,8 +294,8 @@ export class ProductionDailyVolumnRecordService {
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
-      const hours = duration.asHours();
-      shift.Shift_Oper_Time = hours.toString();
+      shift.Shift_Oper_Time =
+        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
     }
 
     // ตาราง Feedstock Oil Consumption
@@ -429,8 +429,9 @@ export class ProductionDailyVolumnRecordService {
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
-      const hours = duration.asHours();
-      shift.Shift_Oper_Time = hours.toString();
+
+      shift.Shift_Oper_Time =
+        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
     }
 
     // ตาราง Feedstock Oil Consumption
@@ -506,8 +507,8 @@ export class ProductionDailyVolumnRecordService {
       let shiftEnd = moment(shift.Shift_End, 'HH:mm');
 
       const duration = moment.duration(shiftEnd.diff(shiftStart));
-      const hours = duration.asHours();
-      shift.Shift_Oper_Time = hours.toString();
+      shift.Shift_Oper_Time =
+        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
     }
 
     // ตาราง Feedstock Oil Consumption
