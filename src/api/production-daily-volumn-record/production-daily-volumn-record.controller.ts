@@ -5,10 +5,10 @@ import {
   Get,
   Post,
   Put,
-  Delete,
   Request,
   UseInterceptors,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { BaseController } from 'src/base.controller';
 import { ProductionDailyVolumnRecordService } from './production-daily-volumn-record.service';
@@ -140,5 +140,29 @@ export class ProductionDailyVolumnRecordController extends BaseController {
     const newFilename = `${filenameWithoutExtension}_${dateTimeFormat}${extension}`;
 
     return newFilename;
+  }
+
+  @Post('download')
+  async getFile(@Body() data: any, @Res() res: Response) {
+    try {
+      console.log('filename : ', data);
+      const systemParams =
+        await this.coSystemParameterService.findbyType('Prod_Daily');
+      const directoryPath =
+        process.env.ENV === 'develop'
+          ? path.join(process.env.ENV_DEVELOP_DIR, 'Prod_Daily')
+          : systemParams.paramValue;
+      const pathFile = path.join(directoryPath, data.fileName);
+      console.log('pathFile : ', pathFile);
+      if (fs.existsSync(pathFile)) {
+        res.sendFile(pathFile);
+      } else {
+        res
+          .status(404)
+          .send({ result: false, message: 'File not found', path: pathFile });
+      }
+    } catch (error) {
+      throw new Error(error.message || 'An unexpected error occurred');
+    }
   }
 }

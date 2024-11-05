@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CommonService } from 'src/common/common.service';
 import { ProductionDailyVolumnRecordSearchDto } from './dto/production-daily-volumn-record-search.dto';
 import * as XLSX from 'xlsx';
-import * as ExcelJS from 'exceljs';
 import * as moment from 'moment';
 import {
   ProductionDailyVolumnRecordDto,
