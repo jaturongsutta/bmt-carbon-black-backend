@@ -31,14 +31,7 @@ export class TankShippingController extends BaseController {
 
   @Post('getAdjectValue')
   async getAdjectValue(@Body() dto: TankShippingDto) {
-    return await this.service.getAdjectValue(
-      dto.date,
-      dto.lineTank,
-      dto.grade,
-      dto.productName,
-      dto.empty,
-      dto.totalQty,
-    );
+    return await this.service.getAdjectValue(dto);
   }
 
   @Post('add')

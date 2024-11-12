@@ -65,23 +65,23 @@ export class TankShippingService {
     return dto;
   }
 
-  async getAdjectValue(
-    date,
-    lineTank,
-    grade,
-    productName,
-    empty,
-    totalQty: number,
-  ): Promise<BaseResponse> {
+  async getAdjectValue(dto: TankShippingDto): Promise<BaseResponse> {
     try {
       let req = await this.commonService.getConnection();
 
-      req.input('Date', date);
-      req.input('Tank', lineTank);
-      req.input('Grade', grade);
-      req.input('Product_Name', productName);
-      req.input('Total_Qty', totalQty);
-      req.input('Empty', empty === 'Y' ? 'Y' : 'N');
+      req.input('Date', dto.date);
+      req.input('Tank', dto.lineTank);
+      req.input('Grade', dto.grade);
+      req.input('Product_Name', dto.productName);
+      req.input('Total_Qty', dto.totalQty);
+      req.input('Empty', dto.empty === 'Y' ? 'Y' : 'N');
+      req.input(
+        'Tank_Shipping_Id',
+        dto.tankShippingId ? dto.tankShippingId : null,
+      );
+      req.input('Working_Time_Start', dto.workingTimeStart);
+      req.input('Working_Time_Stop', dto.workingTimeStop);
+
       req.output('Return_CD', '');
       req.output('Return_Name', '');
 
