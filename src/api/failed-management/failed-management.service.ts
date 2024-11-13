@@ -102,7 +102,7 @@ export class FailedManagementService {
       req.input('Product_Name', data.productName);
       req.input('Prod_Weight2', data.prodWeight2);
       req.input('Failed_Value', data.failedValue);
-      req.input('Final_Prod2', data.finalProd2);
+      // req.input('Final_Prod2', data.finalProd2);
       req.input('Create_By', userId);
       req.output('Return_CD', '');
       req.output('Return_Name', '');
@@ -135,7 +135,7 @@ export class FailedManagementService {
       let req = await this.commonService.getConnection();
       req.input('Failed_Id', id);
       req.input('Failed_Value', data.failedValue);
-      req.input('Final_Prod2', data.finalProd2);
+      // req.input('Final_Prod2', data.finalProd2);
       req.input('Update_By', userId);
       req.output('Return_CD', '');
       req.output('Return_Name', '');
