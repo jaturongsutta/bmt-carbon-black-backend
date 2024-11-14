@@ -17,6 +17,7 @@ import { FailedManagementModule } from './api/failed-management/failed-managemen
 import { ProductionDailyVolumnRecordModule } from './api/production-daily-volumn-record/production-daily-volumn-record.module';
 import { CoSystemParametersModule } from './api/co-system-parameters/co-system-parameters.module';
 import { CoConfigReportsModule } from './api/co-config-reports/co-config-reports.module';
+import { LineModule } from './api/line/line.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -52,6 +53,7 @@ dotenv.config(); // Load environment variables from .env file
     ProductionDailyVolumnRecordModule,
     CoSystemParametersModule,
     CoConfigReportsModule,
+    LineModule,
   ],
   controllers: [AppController],
   providers: [AppService],
