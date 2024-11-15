@@ -10,6 +10,7 @@ export class MasterIndexService {
 
   async search(dto: MasterIndexSearchDto) {
     const req = await this.commonService.getConnection();
+    req.input('Line', dto.line);
     req.input('Product_Id', dto.product);
     req.input('Status', dto.status);
     req.input('Row_No_From', dto.searchOptions.rowFrom);
