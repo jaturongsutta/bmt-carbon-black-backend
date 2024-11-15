@@ -18,6 +18,7 @@ import { ProductionDailyVolumnRecordModule } from './api/production-daily-volumn
 import { CoSystemParametersModule } from './api/co-system-parameters/co-system-parameters.module';
 import { CoConfigReportsModule } from './api/co-config-reports/co-config-reports.module';
 import { LineModule } from './api/line/line.module';
+import { ProductModule } from './api/product/product.module';
 
 dotenv.config(); // Load environment variables from .env file
 @Module({
@@ -54,6 +55,7 @@ dotenv.config(); // Load environment variables from .env file
     CoSystemParametersModule,
     CoConfigReportsModule,
     LineModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
