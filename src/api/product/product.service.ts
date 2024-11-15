@@ -95,7 +95,7 @@ export class ProductService {
       req.output('Return_Name', '');
 
       const result = await this.commonService.executeStoreProcedure(
-        'sp_update_co_line',
+        'sp_update_co_product',
         req,
       );
 
