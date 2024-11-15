@@ -32,7 +32,7 @@ export class Predefine {
   @CreateDateColumn({
     name: 'Created_Date',
     type: 'datetime',
-    nullable: true,
+    nullable: false,
     default: () => 'GETDATE()',
   })
   createDate: Date;

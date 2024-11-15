@@ -38,6 +38,8 @@ export class PredefineService {
     try {
       predefineDto.createBy = userId;
       predefineDto.updateBy = userId;
+      predefineDto.createDate = new Date();
+      predefineDto.updateDate = new Date();
       const data = await this.predefineRepository.findOne({
         where: {
           predefineGroup: predefineDto.predefineGroup,
@@ -50,6 +52,8 @@ export class PredefineService {
           message: 'Predefine already exists',
         };
       }
+
+      console.log('predefineDto : ', predefineDto);
 
       const predefine = this.predefineRepository.create(predefineDto);
       console.log('perdefine : ', predefine);
