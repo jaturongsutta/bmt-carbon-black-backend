@@ -222,10 +222,43 @@ export class ProductionDailyVolumnRecordService {
       const shift2 = this.getShift2(worksheet);
       const shift3 = this.getShift3(worksheet);
 
+      const timeShift1 = await this.commonService.executeQuery(
+        "SELECT  [Start_time] ,[End_time] FROM co_shift WHERE Is_Active ='Y' AND Shift_Id = '1'",
+      );
+      const timeShift2 = await this.commonService.executeQuery(
+        "SELECT  [Start_time] ,[End_time] FROM co_shift WHERE Is_Active ='Y' AND Shift_Id = '2'",
+      );
+      const timeShift3 = await this.commonService.executeQuery(
+        "SELECT  [Start_time] ,[End_time] FROM co_shift WHERE Is_Active ='Y' AND Shift_Id = '3'",
+      );
+
+      // if start time is null then get from co_shift
+      if (!shift1.Shift_Start) {
+        shift1.Shift_Start = timeShift1[0].Start_time;
+      }
+      if (!shift2.Shift_Start) {
+        shift2.Shift_Start = timeShift2[0].Start_time;
+      }
+      if (!shift3.Shift_Start) {
+        shift3.Shift_Start = timeShift3[0].Start_time;
+      }
+
+      // if end time is null then get from co_shift
+      if (!shift1.Shift_End) {
+        shift1.Shift_End = timeShift1[0].End_time;
+      }
+      if (!shift2.Shift_End) {
+        shift2.Shift_End = timeShift2[0].End_time;
+      }
+      if (!shift3.Shift_End) {
+        shift3.Shift_End = timeShift3[0].End_time;
+      }
+
       dto.shifts = [shift1, shift2, shift3];
     } catch (error) {
       dto.result.status = 2;
       dto.result.message = error.message;
+      console.error(error);
     }
     return dto;
   }
