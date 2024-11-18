@@ -254,6 +254,19 @@ export class ProductionDailyVolumnRecordService {
         shift3.Shift_End = timeShift3[0].End_time;
       }
 
+      shift1.Shift_Oper_Time = this.calculateShiftOperTime(
+        shift1.Shift_Start,
+        shift1.Shift_End,
+      );
+      shift2.Shift_Oper_Time = this.calculateShiftOperTime(
+        shift2.Shift_Start,
+        shift2.Shift_End,
+      );
+      shift3.Shift_Oper_Time = this.calculateShiftOperTime(
+        shift3.Shift_Start,
+        shift3.Shift_End,
+      );
+
       dto.shifts = [shift1, shift2, shift3];
     } catch (error) {
       dto.result.status = 2;
@@ -319,16 +332,6 @@ export class ProductionDailyVolumnRecordService {
     shift.Shift = this.excelSheetValue(worksheet, 'B13');
     shift.Shift_Start = this.excelSheetTime(worksheet, 'H23');
     shift.Shift_End = this.excelSheetTime(worksheet, 'I23');
-
-    // Calculate the difference between Shift_Start and Shift_End
-    if (shift.Shift_Start && shift.Shift_End) {
-      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      const duration = moment.duration(shiftEnd.diff(shiftStart));
-      shift.Shift_Oper_Time =
-        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
-    }
 
     // ตาราง Feedstock Oil Consumption
     shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C13');
@@ -448,23 +451,25 @@ export class ProductionDailyVolumnRecordService {
     return storageTanks;
   }
 
+  calculateShiftOperTime(startTime, endTime) {
+    if (startTime && endTime) {
+      let shiftStart = moment(startTime, 'HH:mm');
+      let shiftEnd = moment(endTime, 'HH:mm');
+
+      const duration = moment.duration(shiftEnd.diff(shiftStart));
+      return (
+        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0')
+      );
+    }
+    return '';
+  }
+
   getShift2(worksheet: any) {
     const shift = new ProductionDailyVolumnRecordShift();
 
     shift.Shift = this.excelSheetValue(worksheet, 'B14');
     shift.Shift_Start = this.excelSheetTime(worksheet, 'V23');
     shift.Shift_End = this.excelSheetTime(worksheet, 'W23');
-
-    // Calculate the difference between Shift_Start and Shift_End
-    if (shift.Shift_Start && shift.Shift_End) {
-      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      const duration = moment.duration(shiftEnd.diff(shiftStart));
-
-      shift.Shift_Oper_Time =
-        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
-    }
 
     // ตาราง Feedstock Oil Consumption
     shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C14');
@@ -532,16 +537,6 @@ export class ProductionDailyVolumnRecordService {
     shift.Shift = this.excelSheetValue(worksheet, 'B15');
     shift.Shift_Start = this.excelSheetTime(worksheet, 'AG23');
     shift.Shift_End = this.excelSheetTime(worksheet, 'AH23');
-
-    // Calculate the difference between Shift_Start and Shift_End
-    if (shift.Shift_Start && shift.Shift_End) {
-      let shiftStart = moment(shift.Shift_Start, 'HH:mm');
-      let shiftEnd = moment(shift.Shift_End, 'HH:mm');
-
-      const duration = moment.duration(shiftEnd.diff(shiftStart));
-      shift.Shift_Oper_Time =
-        duration.hours() + '.' + duration.minutes().toString().padStart(2, '0');
-    }
 
     // ตาราง Feedstock Oil Consumption
     shift.T1_Production_EBO = this.excelSheetValue(worksheet, 'C15');
