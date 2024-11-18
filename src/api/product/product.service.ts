@@ -10,7 +10,7 @@ export class ProductService {
 
   async search(dto: ProductSearchDto) {
     const req = await this.commonService.getConnection();
-    req.input('Product_Id', dto.product);
+    req.input('Product_Name', dto.product ? dto.product : null);
     req.input('Status', dto.status);
     req.input('Row_No_From', dto.searchOptions.rowFrom);
     req.input('Row_No_To', dto.searchOptions.rowTo);
