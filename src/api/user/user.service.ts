@@ -57,7 +57,6 @@ export class UserService {
     }
   }
   async addUser(data: UserDto): Promise<User> {
-    console.log('data', data);
     const user = this.userRepository.create(data);
     return await this.userRepository.save(user);
   }
@@ -72,24 +71,41 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async changePassword(data: UserChangePasswordDto) {
+  async changePassword(
+    userId,
+    oldPassword,
+    newPassword,
+  ): Promise<BaseResponse> {
     try {
-      const req = await this.commonService.getConnection();
-      req.input('User_ID', data.userId);
-      req.input('Change_By_Admin', data.changeByAdmin);
-      req.input('Old_Password', data.oldPassword);
-      req.input('New_Password', data.newPassword);
-      req.input('Created_By', data.createdBy);
-
-      req.output('Return_CD', '');
-      const result = await this.commonService.executeStoreProcedure(
-        'sp_Change_Password',
-        req,
+      const result = await this.commonService.executeQuery(
+        'SELECT User_Password FROM  um_user WHERE USER_ID = ' + userId,
       );
 
-      return result.output.Return_CD;
+      if (!result) {
+        throw new Error('User not found');
+      }
+
+      const user = await this.userRepository.findOneBy({ userId: userId });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const currentPassword = result[0].User_Password;
+      if (currentPassword !== oldPassword) {
+        return {
+          status: 1,
+          message: 'Old password is incorrect',
+        };
+      }
+
+      user.userPassword = newPassword;
+      await this.userRepository.save(user);
+      return {
+        status: 0,
+      };
     } catch (error) {
-      throw new Error(error.message || 'An unexpected error occurred');
+      console.error(error);
+      throw new Error(error);
     }
   }
 

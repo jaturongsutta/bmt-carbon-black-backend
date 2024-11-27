@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -17,6 +18,8 @@ import { BaseResponse } from 'src/common/base-response';
 
 @Controller('user')
 export class UserController extends BaseController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(private userService: UserService) {
     super();
   }
@@ -66,16 +69,25 @@ export class UserController extends BaseController {
     }
   }
 
-  @Put('change-password')
-  async changePass(@Body() data: UserChangePasswordDto) {
+  @Post('change-password')
+  async changePass(@Body() data: UserChangePasswordDto): Promise<BaseResponse> {
     try {
-      data.oldPassword = EncryptData.hash(data.oldPassword);
-      data.newPassword = EncryptData.hash(data.newPassword);
+      this.logger.log('User ' + data.userId + ' Change password');
+      const oldPassword = EncryptData.hash(data.oldPassword);
+      const newPassword = EncryptData.hash(data.newPassword);
 
-      const result = await this.userService.changePassword(data);
+      const result = await this.userService.changePassword(
+        data.userId,
+        oldPassword,
+        newPassword,
+      );
       return result;
     } catch (error) {
-      throw error;
+      this.logger.error(error.message);
+      return {
+        status: 2,
+        message: error.message,
+      };
     }
   }
 
