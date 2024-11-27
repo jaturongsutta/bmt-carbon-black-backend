@@ -58,6 +58,9 @@ export class UserService {
   }
   async addUser(data: UserDto): Promise<User> {
     const user = this.userRepository.create(data);
+    if (data.password) {
+      user.userPassword = data.password;
+    }
     return await this.userRepository.save(user);
   }
 
@@ -67,7 +70,15 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, data);
+    if (data.password) {
+      user.userPassword = data.password;
+    }
+    user.firstName = data.firstName;
+    user.lastName = data.lastName;
+    user.isActive = data.isActive;
+    user.updateBy = data.updatedBy;
+    user.updateDate = new Date();
+    //Object.assign(user, data);
     return await this.userRepository.save(user);
   }
 

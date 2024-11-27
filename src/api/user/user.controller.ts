@@ -45,6 +45,11 @@ export class UserController extends BaseController {
     @Request() req: any,
   ): Promise<BaseResponse> {
     data.createdBy = req.user.userId;
+
+    if (data.password) {
+      data.password = EncryptData.hash(data.password);
+    }
+
     const result = await this.userService.addUser(data);
 
     if (result) {
@@ -61,6 +66,10 @@ export class UserController extends BaseController {
     @Request() req: any,
   ): Promise<BaseResponse> {
     data.updatedBy = req.user.userId;
+    if (data.password) {
+      data.password = EncryptData.hash(data.password);
+    }
+
     const result = await this.userService.updateUser(id, data);
     if (result) {
       return {
