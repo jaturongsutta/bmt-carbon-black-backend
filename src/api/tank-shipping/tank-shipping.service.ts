@@ -40,7 +40,7 @@ export class TankShippingService {
         dto.lineTank = data.Tank;
         dto.product = data.Product;
         dto.date = data.Date;
-        dto.grade = data.Grade;
+        // dto.grade = data.Grade;
         dto.productName = data.Product_Name;
         dto.shippingType = data.Shipping_Type;
         dto.class = data.Class;
@@ -71,7 +71,7 @@ export class TankShippingService {
 
       req.input('Date', dto.date);
       req.input('Tank', dto.lineTank);
-      req.input('Grade', dto.grade);
+      // req.input('Grade', dto.grade);
       req.input('Product_Name', dto.productName);
       req.input('Total_Qty', dto.totalQty);
       req.input('Empty', dto.empty === 'Y' ? 'Y' : 'N');
@@ -112,7 +112,7 @@ export class TankShippingService {
       let req = await this.commonService.getConnection();
       req.input('Date', data.date);
       req.input('Tank', data.lineTank);
-      req.input('Grade', data.grade);
+      // req.input('Grade', data.grade);
       req.input('Product_Name', data.productName);
       req.input('Shipping_Type', data.shippingType);
       req.input('Class', data.class);
