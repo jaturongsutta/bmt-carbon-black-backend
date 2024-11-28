@@ -7,11 +7,14 @@ import { UserDto } from './dto/user.dto';
 import { UserSearchDto } from './dto/user-search.dto';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
 import { BaseResponse } from 'src/common/base-response';
+import { UserRole } from 'src/entity/user-role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserRole)
+    private userRoleRepository: Repository<UserRole>,
     private commonService: CommonService,
   ) {}
 
@@ -19,6 +22,12 @@ export class UserService {
     const dto = new UserDto();
 
     const user = await this.userRepository.findOne({ where: { userId: id } });
+
+    // get roles by userId
+    const roles = await this.userRoleRepository.find({
+      where: { userId: id },
+    });
+
     if (!user) {
       dto.result.status = 2;
       dto.result.message = 'User not found';
@@ -26,6 +35,8 @@ export class UserService {
     }
 
     Object.assign(dto, user);
+
+    dto.roles = roles.map((e) => e.roleId);
     return dto;
   }
 
@@ -61,7 +72,17 @@ export class UserService {
     if (data.password) {
       user.userPassword = data.password;
     }
-    return await this.userRepository.save(user);
+    const r = await this.userRepository.save(user);
+
+    const roles = data.roles;
+    for (let i = 0; i < roles.length; i++) {
+      const role = this.userRoleRepository.create();
+      role.roleId = roles[i];
+      role.userId = r.userId;
+      await this.userRoleRepository.save(role);
+    }
+
+    return r;
   }
 
   async updateUser(id: number, data: UserDto): Promise<User> {
@@ -79,7 +100,19 @@ export class UserService {
     user.updateBy = data.updatedBy;
     user.updateDate = new Date();
     //Object.assign(user, data);
-    return await this.userRepository.save(user);
+    const r = await this.userRepository.save(user);
+
+    // Delete all roles by userId
+    await this.userRoleRepository.delete({ userId: id });
+    const roles = data.roles;
+    for (let i = 0; i < roles.length; i++) {
+      const role = this.userRoleRepository.create();
+      role.roleId = roles[i];
+      role.userId = id;
+      await this.userRoleRepository.save(role);
+    }
+
+    return r;
   }
 
   async changePassword(
@@ -121,6 +154,8 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<BaseResponse> {
+    // Delete all roles by userId
+    await this.userRoleRepository.delete({ userId: id });
     const r = await this.userRepository.delete({ userId: id });
     if (r.affected > 0) return { status: 0 };
     else return { status: 1 };

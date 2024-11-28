@@ -13,7 +13,7 @@ export class UserDto extends BaseDto {
 
   positionName: string;
 
-  roleID: number;
+  // roleID: number;
 
   isActive: string;
 
@@ -27,9 +27,5 @@ export class UserDto extends BaseDto {
 
   status: string;
 
-  rowNumber: number;
-
-  listRow: {
-    Role_ID: string;
-  }[];
+  roles: number[];
 }
