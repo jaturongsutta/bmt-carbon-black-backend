@@ -24,6 +24,16 @@ export class DropdownListController extends BaseController {
     return this.service.getPredefine(group, req.headers.language);
   }
 
+  @Get('role')
+  getRole(@Request() req: any) {
+    return this.service.getDropdownList(
+      'um_role',
+      'Role_ID',
+      'Role_Name_EN',
+      "Is_Active = 'Y'",
+    );
+  }
+
   @Get('line')
   getLine(@Request() req: any) {
     return this.service.getDropdownList(

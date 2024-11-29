@@ -7,11 +7,14 @@ import { UserDto } from './dto/user.dto';
 import { UserSearchDto } from './dto/user-search.dto';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
 import { BaseResponse } from 'src/common/base-response';
+import { UserRole } from 'src/entity/user-role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserRole)
+    private userRoleRepository: Repository<UserRole>,
     private commonService: CommonService,
   ) {}
 
@@ -19,6 +22,12 @@ export class UserService {
     const dto = new UserDto();
 
     const user = await this.userRepository.findOne({ where: { userId: id } });
+
+    // get roles by userId
+    const roles = await this.userRoleRepository.find({
+      where: { userId: id },
+    });
+
     if (!user) {
       dto.result.status = 2;
       dto.result.message = 'User not found';
@@ -26,6 +35,8 @@ export class UserService {
     }
 
     Object.assign(dto, user);
+
+    dto.roles = roles.map((e) => e.roleId);
     return dto;
   }
 
@@ -57,9 +68,21 @@ export class UserService {
     }
   }
   async addUser(data: UserDto): Promise<User> {
-    console.log('data', data);
     const user = this.userRepository.create(data);
-    return await this.userRepository.save(user);
+    if (data.password) {
+      user.userPassword = data.password;
+    }
+    const r = await this.userRepository.save(user);
+
+    const roles = data.roles;
+    for (let i = 0; i < roles.length; i++) {
+      const role = this.userRoleRepository.create();
+      role.roleId = roles[i];
+      role.userId = r.userId;
+      await this.userRoleRepository.save(role);
+    }
+
+    return r;
   }
 
   async updateUser(id: number, data: UserDto): Promise<User> {
@@ -68,32 +91,71 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, data);
-    return await this.userRepository.save(user);
+    if (data.password) {
+      user.userPassword = data.password;
+    }
+    user.firstName = data.firstName;
+    user.lastName = data.lastName;
+    user.isActive = data.isActive;
+    user.updateBy = data.updatedBy;
+    user.updateDate = new Date();
+    //Object.assign(user, data);
+    const r = await this.userRepository.save(user);
+
+    // Delete all roles by userId
+    await this.userRoleRepository.delete({ userId: id });
+    const roles = data.roles;
+    for (let i = 0; i < roles.length; i++) {
+      const role = this.userRoleRepository.create();
+      role.roleId = roles[i];
+      role.userId = id;
+      await this.userRoleRepository.save(role);
+    }
+
+    return r;
   }
 
-  async changePassword(data: UserChangePasswordDto) {
+  async changePassword(
+    userId,
+    oldPassword,
+    newPassword,
+  ): Promise<BaseResponse> {
     try {
-      const req = await this.commonService.getConnection();
-      req.input('User_ID', data.userId);
-      req.input('Change_By_Admin', data.changeByAdmin);
-      req.input('Old_Password', data.oldPassword);
-      req.input('New_Password', data.newPassword);
-      req.input('Created_By', data.createdBy);
-
-      req.output('Return_CD', '');
-      const result = await this.commonService.executeStoreProcedure(
-        'sp_Change_Password',
-        req,
+      const result = await this.commonService.executeQuery(
+        'SELECT User_Password FROM  um_user WHERE USER_ID = ' + userId,
       );
 
-      return result.output.Return_CD;
+      if (!result) {
+        throw new Error('User not found');
+      }
+
+      const user = await this.userRepository.findOneBy({ userId: userId });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const currentPassword = result[0].User_Password;
+      if (currentPassword !== oldPassword) {
+        return {
+          status: 1,
+          message: 'Old password is incorrect',
+        };
+      }
+
+      user.userPassword = newPassword;
+      await this.userRepository.save(user);
+      return {
+        status: 0,
+      };
     } catch (error) {
-      throw new Error(error.message || 'An unexpected error occurred');
+      console.error(error);
+      throw new Error(error);
     }
   }
 
   async deleteUser(id: number): Promise<BaseResponse> {
+    // Delete all roles by userId
+    await this.userRoleRepository.delete({ userId: id });
     const r = await this.userRepository.delete({ userId: id });
     if (r.affected > 0) return { status: 0 };
     else return { status: 1 };
