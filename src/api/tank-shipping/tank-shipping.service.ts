@@ -81,6 +81,7 @@ export class TankShippingService {
       );
       req.input('Working_Time_Start', dto.workingTimeStart);
       req.input('Working_Time_Stop', dto.workingTimeStop);
+      req.input('Class', dto.class);
 
       req.output('Return_CD', '');
       req.output('Return_Name', '');
