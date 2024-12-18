@@ -6,8 +6,6 @@ import { Predefine } from 'src/entity/predefine.entity';
 import { Repository } from 'typeorm';
 @Injectable()
 export class ApplicationLogService {
-  private readonly logPath = 'logs';
-
   constructor(
     private readonly logger: Logger,
     @InjectRepository(Predefine)
@@ -15,7 +13,7 @@ export class ApplicationLogService {
   ) {}
 
   async search() {
-    let logDir = path.join(process.env.ENV_DEVELOP_DIR, 'logs');
+    let logDir = path.join(process.env.ENV_DEVELOP_DIR, 'combined');
     if (process.env.ENV !== 'develop') {
       const data = await this.predefineRepository.findOne({
         where: { predefineGroup: 'ConfigPath', predefineCd: 'Log' },
@@ -24,7 +22,7 @@ export class ApplicationLogService {
       logDir = data.valueEn;
     }
 
-    const directoryPathCombined = path.join(logDir, 'logs');
+    const directoryPathCombined = path.join(logDir, 'combined');
     const directoryPathError = path.join(logDir, 'error');
 
     try {
@@ -71,7 +69,7 @@ export class ApplicationLogService {
       logDir = data.valueEn;
     }
 
-    const directoryPathCombined = path.join(logDir, 'logs');
+    const directoryPathCombined = path.join(logDir, 'combined');
     const directoryPathError = path.join(logDir, 'error');
 
     const directoryPathSelected =
